@@ -12,7 +12,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.openlca.core.database.EntityCache;
 import org.openlca.core.model.DQIndicator;
 import org.openlca.core.model.DQSystem;
-import org.openlca.core.model.Location;
 import org.openlca.core.model.descriptors.CategorizedDescriptor;
 import org.openlca.core.model.descriptors.FlowDescriptor;
 import org.openlca.core.model.descriptors.ImpactCategoryDescriptor;
@@ -45,11 +44,7 @@ public class CellWriter {
 		if (!(process instanceof ProcessDescriptor))
 			return;
 		ProcessDescriptor p = (ProcessDescriptor) process;
-		if (p.location == null)
-			return;
-		Location loc = cache.get(Location.class, p.location);
-		String code = loc == null ? "" : loc.code;
-		cell(sheet, row++, col, code, false);
+		cell(sheet, row++, col, p.location, false);
 	}
 
 	/**

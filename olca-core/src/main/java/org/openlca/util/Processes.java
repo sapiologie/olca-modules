@@ -1,9 +1,7 @@
 package org.openlca.util;
 
 import org.openlca.core.database.IDatabase;
-import org.openlca.core.database.LocationDao;
 import org.openlca.core.database.ProcessDao;
-import org.openlca.core.model.Location;
 import org.openlca.core.model.descriptors.ProcessDescriptor;
 
 public class Processes {
@@ -21,18 +19,11 @@ public class Processes {
 			return null;
 		String fullName = label;
 		String name = null;
-		Location location = null;
+		String location = null;
 		if (fullName.contains(" - ")) {
 			int splitIdx = fullName.lastIndexOf(" - ");
 			name = fullName.substring(0, splitIdx).trim();
-			String locationCode = fullName.substring(splitIdx + 3).trim();
-			LocationDao dao = new LocationDao(db);
-			for (Location loc : dao.getAll()) {
-				if (Strings.nullOrEqual(loc.code, locationCode)) {
-					location = loc;
-					break;
-				}
-			}
+			location = fullName.substring(splitIdx + 3).trim();
 		}
 
 		ProcessDescriptor selected = null;
@@ -57,13 +48,9 @@ public class Processes {
 		return selected;
 	}
 
-	private static boolean matchLocation(ProcessDescriptor d, Location loc) {
+	private static boolean matchLocation(ProcessDescriptor d, String code) {
 		if (d == null)
 			return false;
-		if (d.location == null)
-			return loc == null;
-		if (loc == null)
-			return d.location == null;
-		return d.location.longValue() == loc.id;
+		return Strings.nullOrEqual(d.location, code);
 	}
 }

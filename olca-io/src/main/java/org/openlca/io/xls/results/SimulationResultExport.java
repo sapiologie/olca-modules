@@ -14,7 +14,6 @@ import org.openlca.core.database.EntityCache;
 import org.openlca.core.math.CalculationSetup;
 import org.openlca.core.matrix.FlowIndex;
 import org.openlca.core.matrix.ProcessProduct;
-import org.openlca.core.model.Location;
 import org.openlca.core.model.descriptors.FlowDescriptor;
 import org.openlca.core.model.descriptors.ImpactCategoryDescriptor;
 import org.openlca.core.model.descriptors.ProcessDescriptor;
@@ -146,10 +145,7 @@ public class SimulationResultExport {
 			if (pp.process instanceof ProcessDescriptor) {
 				ProcessDescriptor p = (ProcessDescriptor) pp.process;
 				if (p.location != null) {
-					Location loc = cache.get(Location.class, p.location);
-					if (loc != null) {
-						label += " - " + loc.code;
-					}
+					label += " - " + p.location;
 				}
 			}
 		}

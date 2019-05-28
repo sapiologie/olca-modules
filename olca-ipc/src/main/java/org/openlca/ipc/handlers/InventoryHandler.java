@@ -3,6 +3,7 @@ package org.openlca.ipc.handlers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openlca.core.database.EntityCache;
 import org.openlca.core.model.descriptors.CategorizedDescriptor;
 import org.openlca.core.model.descriptors.FlowDescriptor;
 import org.openlca.core.model.descriptors.LocationDescriptor;
@@ -51,11 +52,12 @@ public class InventoryHandler {
 
 	@Rpc("get/inventory/contributions/processes")
 	public RpcResponse getProcessContributions(RpcRequest req) {
-		return utils.contributionFlow(req, (result, flow, cache) -> {
+		return utils.contributionFlow(req, (result, flow, context) -> {
 			List<ContributionItem<CategorizedDescriptor>> contributions = result
 					.getProcessContributions(flow).contributions;
 			contributions = utils.filter(contributions,
 					contribution -> contribution.amount != 0);
+			EntityCache cache = EntityCache.create(context.db);
 			return JsonRpc.encode(contributions, cache,
 					json -> json.addProperty("unit", flow.refUnit));
 		});
@@ -63,13 +65,14 @@ public class InventoryHandler {
 
 	@Rpc("get/inventory/contributions/locations")
 	public RpcResponse getLocationContributions(RpcRequest req) {
-		return utils.contributionFlow(req, (result, flow, cache) -> {
+		return utils.contributionFlow(req, (result, flow, context) -> {
 			LocationContribution calculator = new LocationContribution(result,
-					cache);
+					context.db);
 			List<ContributionItem<LocationDescriptor>> contributions = utils
 					.toDescriptors(calculator.calculate(flow).contributions);
 			contributions = utils.filter(contributions,
 					contribution -> contribution.amount != 0);
+			EntityCache cache = EntityCache.create(context.db);
 			return JsonRpc.encode(contributions, cache,
 					json -> json.addProperty("unit", flow.refUnit));
 		});
@@ -84,9 +87,13 @@ public class InventoryHandler {
 					contributions = utils.filter(contributions,
 							contribution -> {
 								if (contribution.item instanceof ProcessDescriptor) {
-									if (((ProcessDescriptor) contribution.item).location != location.id) {
-										return false;
-									}
+									// TODO: this currently does not work.
+									return false;
+									// if (((ProcessDescriptor)
+									// contribution.item).location !=
+									// location.code) {
+									// return false;
+									// }
 								}
 								return contribution.amount != 0;
 							});

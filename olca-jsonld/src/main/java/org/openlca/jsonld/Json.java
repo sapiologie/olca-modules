@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.openlca.core.database.EntityCache;
 import org.openlca.core.model.Category;
-import org.openlca.core.model.Location;
 import org.openlca.core.model.Version;
 import org.openlca.core.model.descriptors.BaseDescriptor;
 import org.openlca.core.model.descriptors.CategorizedDescriptor;
@@ -161,7 +160,7 @@ public class Json {
 			putFlowMetaData(obj, (FlowDescriptor) d);
 		}
 		if (d instanceof ProcessDescriptor) {
-			putProcessMetaData(obj, (ProcessDescriptor) d, cache);
+			putProcessMetaData(obj, (ProcessDescriptor) d);
 		}
 		if (d instanceof ImpactCategoryDescriptor) {
 			ImpactCategoryDescriptor icd = (ImpactCategoryDescriptor) d;
@@ -226,18 +225,14 @@ public class Json {
 		}
 	}
 
-	private static void putProcessMetaData(JsonObject ref,
-			ProcessDescriptor d, EntityCache cache) {
+	private static void putProcessMetaData(JsonObject ref, ProcessDescriptor d) {
 		if (ref == null || d == null)
 			return;
 		if (d.processType != null) {
 			ref.addProperty("processType", Enums.getLabel(d.processType));
 		}
-		if (cache != null && d.location != null) {
-			Location loc = cache.get(Location.class, d.location);
-			if (loc != null) {
-				ref.addProperty("location", loc.code);
-			}
+		if (d.location != null) {
+			ref.addProperty("location", d.location);
 		}
 	}
 

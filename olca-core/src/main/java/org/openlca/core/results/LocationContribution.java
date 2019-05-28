@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.openlca.core.database.EntityCache;
+import org.openlca.core.database.IDatabase;
+import org.openlca.core.database.LocationDao;
+import org.openlca.core.database.NativeSql;
 import org.openlca.core.model.Location;
 import org.openlca.core.model.descriptors.CategorizedDescriptor;
 import org.openlca.core.model.descriptors.FlowDescriptor;
@@ -23,21 +26,40 @@ public class LocationContribution {
 	// TODO: using lists of Provider instances could be a bit faster
 	private Map<Location, List<CategorizedDescriptor>> index = new HashMap<>();
 
-	public LocationContribution(ContributionResult result, EntityCache cache) {
+	public LocationContribution(ContributionResult result, IDatabase db) {
 		this.result = result;
-		initProcessIndex(cache);
+		initProcessIndex(db);
 	}
 
-	private void initProcessIndex(EntityCache cache) {
+	private void initProcessIndex(IDatabase db) {
 		if (result == null)
 			return;
+
+		// index process locations
+		Map<Long, Location> locations = new LocationDao(db).getAll()
+				.stream().collect(Collectors.toMap(
+						loc -> loc.id, loc -> loc));
+		Map<Long, Location> processLocs = new HashMap<>();
+		String sql = "select id, f_location from tbl_processes";
+		try {
+			NativeSql.on(db).query(sql, r -> {
+				long id = r.getLong(1);
+				long loc = r.getLong(2);
+				if (!r.wasNull()) {
+					processLocs.put(id, locations.get(loc));
+				}
+				return true;
+			});
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+		// group processes by location
 		for (CategorizedDescriptor d : result.getProcesses()) {
 			Location loc = null;
 			if (d instanceof ProcessDescriptor) {
 				ProcessDescriptor p = (ProcessDescriptor) d;
-				if (p.location != null) {
-					loc = cache.get(Location.class, p.location);
-				}
+				loc = processLocs.get(p.id);
 			}
 			List<CategorizedDescriptor> list = index.get(loc);
 			if (list == null) {

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openlca.core.database.EntityCache;
 import org.openlca.core.model.descriptors.CategorizedDescriptor;
 import org.openlca.core.model.descriptors.FlowDescriptor;
 import org.openlca.core.model.descriptors.ImpactCategoryDescriptor;
@@ -42,7 +43,7 @@ public class ImpactHandler {
 
 	@Rpc("get/impacts/contributions/flows")
 	public RpcResponse getFlowContributions(RpcRequest req) {
-		return utils.contributionImpact(req, (result, impact, cache) -> {
+		return utils.contributionImpact(req, (result, impact, context) -> {
 			double total = result.getTotalImpactResult(impact);
 			List<ContributionItem<FlowDescriptor>> contributions = new ArrayList<>();
 			result.getFlows().forEach(flow -> {
@@ -54,51 +55,65 @@ public class ImpactHandler {
 					return;
 				contributions.add(c);
 			});
-			return JsonRpc.encode(contributions, cache, json -> json.addProperty("unit", impact.referenceUnit));
+			EntityCache cache = EntityCache.create(context.db);
+			return JsonRpc.encode(contributions, cache,
+					json -> json.addProperty("unit", impact.referenceUnit));
 		});
 	}
 
 	@Rpc("get/impacts/contributions/process/flows")
 	public RpcResponse getFlowContributionsForProcess(RpcRequest req) {
-		return utils.contributionImpactProcess(req, (result, impact, process, cache) -> {
-			double total = result.getDirectImpactResult(process, impact);
-			List<ContributionItem<FlowDescriptor>> contributions = new ArrayList<>();
-			result.getFlows().forEach(flow -> {
-				ContributionItem<FlowDescriptor> c = new ContributionItem<>();
-				c.item = flow;
-				c.amount = result.getDirectFlowResult(process, flow) * getImpactFactor(result, impact, flow);
-				c.share = c.amount / total;
-				if (c.amount == 0)
-					return;
-				contributions.add(c);
-			});
-			return JsonRpc.encode(contributions, cache, json -> json.addProperty("unit", impact.referenceUnit));
-		});
+		return utils.contributionImpactProcess(req,
+				(result, impact, process, context) -> {
+					double total = result.getDirectImpactResult(process,
+							impact);
+					List<ContributionItem<FlowDescriptor>> contributions = new ArrayList<>();
+					result.getFlows().forEach(flow -> {
+						ContributionItem<FlowDescriptor> c = new ContributionItem<>();
+						c.item = flow;
+						c.amount = result.getDirectFlowResult(process, flow)
+								* getImpactFactor(result, impact, flow);
+						c.share = c.amount / total;
+						if (c.amount == 0)
+							return;
+						contributions.add(c);
+					});
+					EntityCache cache = EntityCache.create(context.db);
+					return JsonRpc.encode(contributions, cache, json -> json
+							.addProperty("unit", impact.referenceUnit));
+				});
 	}
 
 	@Rpc("get/impacts/contributions/location/flows")
 	public RpcResponse getFlowContributionsForLocation(RpcRequest req) {
-		return utils.contributionImpactLocation(req, (result, impact, location, cache) -> {
-			List<ContributionItem<ProcessDescriptor>> contributions = new ArrayList<>();
-			// TODO
-			contributions = utils.filter(contributions, contribution -> contribution.amount != 0);
-			return JsonRpc.encode(contributions, cache, json -> json.addProperty("unit", impact.referenceUnit));
-		});
+		return utils.contributionImpactLocation(req,
+				(result, impact, location, cache) -> {
+					List<ContributionItem<ProcessDescriptor>> contributions = new ArrayList<>();
+					// TODO
+					contributions = utils.filter(contributions,
+							contribution -> contribution.amount != 0);
+					return JsonRpc.encode(contributions, cache, json -> json
+							.addProperty("unit", impact.referenceUnit));
+				});
 	}
 
 	@Rpc("get/impacts/contributions/location/process/flows")
-	public RpcResponse getFlowContributionsForLocationAndProcess(RpcRequest req) {
-		return utils.contributionImpactLocationProcess(req, (result, impact, location, process, cache) -> {
-			List<ContributionItem<ProcessDescriptor>> contributions = new ArrayList<>();
-			// TODO
-			contributions = utils.filter(contributions, contribution -> contribution.amount != 0);
-			return JsonRpc.encode(contributions, cache, json -> json.addProperty("unit", impact.referenceUnit));
-		});
+	public RpcResponse getFlowContributionsForLocationAndProcess(
+			RpcRequest req) {
+		return utils.contributionImpactLocationProcess(req,
+				(result, impact, location, process, cache) -> {
+					List<ContributionItem<ProcessDescriptor>> contributions = new ArrayList<>();
+					// TODO
+					contributions = utils.filter(contributions,
+							contribution -> contribution.amount != 0);
+					return JsonRpc.encode(contributions, cache, json -> json
+							.addProperty("unit", impact.referenceUnit));
+				});
 	}
 
 	@Rpc("get/impacts/contributions/processes")
 	public RpcResponse getProcessContributions(RpcRequest req) {
-		return utils.contributionImpact(req, (result, impact, cache) -> {
+		return utils.contributionImpact(req, (result, impact, context) -> {
 			double total = result.getTotalImpactResult(impact);
 			Map<String, ContributionItem<CategorizedDescriptor>> contributions = new HashMap<>();
 			result.getProcesses().forEach(process -> {
@@ -110,6 +125,7 @@ public class ImpactHandler {
 					return;
 				contributions.put(process.refId, c);
 			});
+			EntityCache cache = EntityCache.create(context.db);
 			return JsonRpc.encode(contributions.values(), cache,
 					json -> json.addProperty("unit", impact.referenceUnit));
 		});
@@ -117,22 +133,28 @@ public class ImpactHandler {
 
 	@Rpc("get/impacts/contributions/location/processes")
 	public RpcResponse getProcessContributionsForLocation(RpcRequest req) {
-		return utils.contributionImpactLocation(req, (result, impact, location, cache) -> {
-			List<ContributionItem<ProcessDescriptor>> contributions = new ArrayList<>();
-			// TODO
-			contributions = utils.filter(contributions, contribution -> contribution.amount != 0);
-			return JsonRpc.encode(contributions, cache, json -> json.addProperty("unit", impact.referenceUnit));
-		});
+		return utils.contributionImpactLocation(req,
+				(result, impact, location, cache) -> {
+					List<ContributionItem<ProcessDescriptor>> contributions = new ArrayList<>();
+					// TODO
+					contributions = utils.filter(contributions,
+							contribution -> contribution.amount != 0);
+					return JsonRpc.encode(contributions, cache, json -> json
+							.addProperty("unit", impact.referenceUnit));
+				});
 	}
 
 	@Rpc("get/impacts/contributions/locations")
 	public RpcResponse getLocationContributions(RpcRequest req) {
-		return utils.contributionImpact(req, (result, impact, cache) -> {
-			LocationContribution calculator = new LocationContribution(result, cache);
+		return utils.contributionImpact(req, (result, impact, context) -> {
+			LocationContribution calculator = new LocationContribution(
+					result, context.db);
 			List<ContributionItem<LocationDescriptor>> contributions = utils
 					.toDescriptors(calculator.calculate(impact).contributions);
-			contributions = utils.filter(contributions, contribution -> contribution.amount != 0);
-			return JsonRpc.encode(contributions, cache, json -> json.addProperty("unit", impact.referenceUnit));
+			contributions = utils.filter(contributions,
+					contribution -> contribution.amount != 0);
+			return JsonRpc.encode(contributions, EntityCache.create(context.db),
+					json -> json.addProperty("unit", impact.referenceUnit));
 		});
 	}
 
@@ -152,13 +174,14 @@ public class ImpactHandler {
 					return;
 				contributions.add(JsonRpc.encode(c, cache, json -> {
 					json.addProperty("unit", impact.referenceUnit);
-					json.addProperty("upstream", result.getUpstreamImpactResult(process, impact));
+					json.addProperty("upstream",
+							result.getUpstreamImpactResult(process, impact));
 				}));
 			});
 			return contributions;
 		});
 	}
-	
+
 	@Rpc("get/impacts/upstream")
 	public RpcResponse getUpstream(RpcRequest req) {
 		return utils.fullImpact(req, (result, impact, cache) -> {
@@ -172,7 +195,8 @@ public class ImpactHandler {
 		});
 	}
 
-	private double getImpactFactor(ContributionResult result, ImpactCategoryDescriptor impact, FlowDescriptor flow) {
+	private double getImpactFactor(ContributionResult result,
+			ImpactCategoryDescriptor impact, FlowDescriptor flow) {
 		int row = result.impactIndex.of(impact);
 		int col = result.flowIndex.of(flow);
 		double value = result.impactFactors.get(row, col);

@@ -16,7 +16,8 @@ import org.openlca.core.model.ProcessType;
 import org.openlca.core.model.descriptors.FlowDescriptor;
 import org.openlca.core.model.descriptors.ProcessDescriptor;
 
-public class ProcessDao extends CategorizedEntityDao<Process, ProcessDescriptor> {
+public class ProcessDao
+		extends CategorizedEntityDao<Process, ProcessDescriptor> {
 
 	public ProcessDao(IDatabase database) {
 		super(Process.class, ProcessDescriptor.class, database);
@@ -39,13 +40,14 @@ public class ProcessDao extends CategorizedEntityDao<Process, ProcessDescriptor>
 		if (type instanceof String) {
 			d.processType = ProcessType.valueOf((String) type);
 		}
-		d.infrastructureProcess = (Integer) queryResult[8] == 1;
-		d.location = (Long) queryResult[9];
-		d.quantitativeReference = (Long) queryResult[10];
+		// d.infrastructureProcess = (Integer) queryResult[8] == 1;
+		// d.location = (Long) queryResult[9];
+		// d.quantitativeReference = (Long) queryResult[10];
 		return d;
 	}
 
-	public List<FlowDescriptor> getTechnologyInputs(ProcessDescriptor descriptor) {
+	public List<FlowDescriptor> getTechnologyInputs(
+			ProcessDescriptor descriptor) {
 		Set<Long> flowIds = getTechnologies(descriptor, true);
 		return loadFlowDescriptors(flowIds);
 	}
@@ -66,19 +68,25 @@ public class ProcessDao extends CategorizedEntityDao<Process, ProcessDescriptor>
 			});
 			return ids;
 		} catch (Exception e) {
-			DatabaseException.logAndThrow(log, "failed to load used providers", e);
+			DatabaseException.logAndThrow(log, "failed to load used providers",
+					e);
 			return Collections.emptySet();
 		}
 	}
 
 	public void replace(long oldId, long productId, Long newId) {
-		String statement = "UPDATE tbl_exchanges SET f_default_provider = " + newId + " "
-				+ "WHERE f_default_provider = " + oldId + " AND f_flow = " + productId;
+		String statement = "UPDATE tbl_exchanges SET f_default_provider = "
+				+ newId + " "
+				+ "WHERE f_default_provider = " + oldId + " AND f_flow = "
+				+ productId;
 		try {
 			NativeSql.on(database).runUpdate(statement);
 		} catch (Exception e) {
-			DatabaseException.logAndThrow(log, "failed to replace provider " + oldId + " for product " + productId
-					+ " with " + newId, e);
+			DatabaseException.logAndThrow(log,
+					"failed to replace provider " + oldId + " for product "
+							+ productId
+							+ " with " + newId,
+					e);
 		}
 	}
 
@@ -117,7 +125,8 @@ public class ProcessDao extends CategorizedEntityDao<Process, ProcessDescriptor>
 		query.append("SELECT id, f_quantitative_reference FROM tbl_processes ");
 		query.append("WHERE id IN " + asSqlList(ids));
 		query.append(" AND f_quantitative_reference IN ");
-		query.append("(SELECT id FROM tbl_exchanges WHERE id = f_quantitative_reference)");
+		query.append(
+				"(SELECT id FROM tbl_exchanges WHERE id = f_quantitative_reference)");
 		Map<Long, Boolean> result = new HashMap<>();
 		for (long id : ids)
 			result.put(id, false);

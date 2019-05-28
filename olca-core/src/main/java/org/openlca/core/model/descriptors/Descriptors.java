@@ -106,17 +106,18 @@ public class Descriptors {
 		return descriptor;
 	}
 
-	public static ProcessDescriptor toDescriptor(Process process) {
-		if (process == null)
+	public static ProcessDescriptor toDescriptor(Process p) {
+		if (p == null)
 			return null;
-		ProcessDescriptor descriptor = new ProcessDescriptor();
-		setBaseValues(process, descriptor);
-		if (process.location != null)
-			descriptor.location = process.location.id;
-		if (process.quantitativeReference != null)
-			descriptor.quantitativeReference = process.quantitativeReference.id;
-		descriptor.processType = process.processType;
-		return descriptor;
+		ProcessDescriptor d = new ProcessDescriptor();
+		setBaseValues(p, d);
+		if (p.location != null)
+			d.location = p.location.code;
+		// TODO
+		// if (p.quantitativeReference != null)
+		// d.quantitativeReference = p.quantitativeReference.id;
+		d.processType = p.processType;
+		return d;
 	}
 
 	public static FlowDescriptor toDescriptor(Flow flow) {

@@ -8,7 +8,6 @@ import org.openlca.core.model.ProductSystem;
 import org.openlca.core.model.descriptors.CategorizedDescriptor;
 import org.openlca.core.model.descriptors.Descriptors;
 import org.openlca.core.model.descriptors.FlowDescriptor;
-import org.openlca.core.model.descriptors.ProcessDescriptor;
 
 /**
  * In openLCA, we map the process-product pairs of a product system to the
@@ -97,12 +96,6 @@ public class ProcessProduct {
 
 	public LongPair pair() {
 		return LongPair.of(id(), flowId());
-	}
-
-	public Long locationId() {
-		if (process instanceof ProcessDescriptor)
-			return ((ProcessDescriptor) process).location;
-		return null;
 	}
 
 }

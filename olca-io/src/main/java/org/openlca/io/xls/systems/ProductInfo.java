@@ -7,7 +7,6 @@ import org.openlca.core.database.EntityCache;
 import org.openlca.core.matrix.ProcessProduct;
 import org.openlca.core.matrix.TechIndex;
 import org.openlca.core.model.Category;
-import org.openlca.core.model.Location;
 import org.openlca.core.model.descriptors.CategorizedDescriptor;
 import org.openlca.core.model.descriptors.FlowDescriptor;
 import org.openlca.core.model.descriptors.ProcessDescriptor;
@@ -56,9 +55,7 @@ class ProductInfo implements Comparable<ProductInfo> {
 			if (process instanceof ProcessDescriptor) {
 				ProcessDescriptor p = (ProcessDescriptor) process;
 				if (p.location != null) {
-					Location loc = cache.get(Location.class, p.location);
-					if (loc != null)
-						info.processLocation = loc.code;
+					info.processLocation = p.location;
 				}
 			}
 			infos.add(info);

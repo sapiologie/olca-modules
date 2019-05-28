@@ -102,8 +102,7 @@ class Utils {
 		if (flow == null)
 			return Responses.invalidParams("Missing or invalid flow parameter",
 					req);
-		EntityCache cache = EntityCache.create(ctx.db);
-		return Responses.ok(handler.handle(result, flow, cache), req);
+		return Responses.ok(handler.handle(result, flow, ctx), req);
 	}
 
 	RpcResponse contributionFlowLocation(RpcRequest req,
@@ -134,8 +133,7 @@ class Utils {
 		if (impact == null)
 			return Responses.invalidParams(
 					"Missing or invalid impact category parameter", req);
-		EntityCache cache = EntityCache.create(ctx.db);
-		return Responses.ok(handler.handle(result, impact, cache), req);
+		return Responses.ok(handler.handle(result, impact, ctx), req);
 	}
 
 	RpcResponse contributionImpactProcess(RpcRequest req,
@@ -154,9 +152,7 @@ class Utils {
 		if (process == null)
 			return Responses
 					.invalidParams("Missing or invalid process parameter", req);
-		EntityCache cache = EntityCache.create(ctx.db);
-		return Responses.ok(handler.handle(result, impact, process, cache),
-				req);
+		return Responses.ok(handler.handle(result, impact, process, ctx), req);
 	}
 
 	RpcResponse contributionImpactLocation(RpcRequest req,
@@ -327,8 +323,7 @@ class Utils {
 	interface ContributionFlow {
 
 		JsonElement handle(ContributionResult result, FlowDescriptor flow,
-				EntityCache cache);
-
+				HandlerContext context);
 	}
 
 	interface ContributionFlowLocation {
@@ -342,7 +337,7 @@ class Utils {
 	interface ContributionImpact {
 
 		JsonElement handle(ContributionResult result,
-				ImpactCategoryDescriptor impact, EntityCache cache);
+				ImpactCategoryDescriptor impact, HandlerContext context);
 
 	}
 
@@ -350,7 +345,7 @@ class Utils {
 
 		JsonElement handle(ContributionResult result,
 				ImpactCategoryDescriptor impact, ProcessDescriptor process,
-				EntityCache cache);
+				HandlerContext context);
 
 	}
 
