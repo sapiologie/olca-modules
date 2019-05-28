@@ -12,7 +12,6 @@ import org.openlca.core.results.ContributionItem;
 import org.openlca.core.results.ContributionSet;
 import org.openlca.core.results.ProjectResult;
 import org.openlca.io.CategoryPair;
-import org.openlca.io.DisplayValues;
 import org.openlca.io.xls.Excel;
 
 class ProjectInventories {
@@ -84,8 +83,7 @@ class ProjectInventories {
 		CategoryPair flowCat = CategoryPair.create(flow, cache);
 		Excel.cell(sheet, row, col++, flowCat.getCategory());
 		Excel.cell(sheet, row, col++, flowCat.getSubCategory());
-		Excel.cell(sheet, row, col++,
-				DisplayValues.referenceUnit(flow, cache));
+		Excel.cell(sheet, row, col++, flow.refUnit);
 	}
 
 	private void writeHeader(int row) {

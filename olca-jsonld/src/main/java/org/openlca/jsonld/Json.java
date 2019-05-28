@@ -5,9 +5,7 @@ import java.util.List;
 
 import org.openlca.core.database.EntityCache;
 import org.openlca.core.model.Category;
-import org.openlca.core.model.FlowProperty;
 import org.openlca.core.model.Location;
-import org.openlca.core.model.Unit;
 import org.openlca.core.model.Version;
 import org.openlca.core.model.descriptors.BaseDescriptor;
 import org.openlca.core.model.descriptors.CategorizedDescriptor;
@@ -160,7 +158,7 @@ public class Json {
 			putCategoryMetaData(obj, (CategoryDescriptor) d);
 		}
 		if (d instanceof FlowDescriptor) {
-			putFlowMetaData(obj, (FlowDescriptor) d, cache);
+			putFlowMetaData(obj, (FlowDescriptor) d);
 		}
 		if (d instanceof ProcessDescriptor) {
 			putProcessMetaData(obj, (ProcessDescriptor) d, cache);
@@ -214,24 +212,17 @@ public class Json {
 		}
 	}
 
-	private static void putFlowMetaData(JsonObject ref,
-			FlowDescriptor d, EntityCache cache) {
+	private static void putFlowMetaData(JsonObject ref, FlowDescriptor d) {
 		if (ref == null || d == null)
 			return;
 		if (d.flowType != null) {
 			ref.addProperty("flowType", Enums.getLabel(d.flowType));
 		}
-		if (cache == null)
-			return;
 		if (d.location != null) {
 			ref.addProperty("location", d.location);
 		}
-		FlowProperty prop = cache.get(FlowProperty.class, d.refFlowPropertyId);
-		if (prop != null && prop.unitGroup != null) {
-			Unit unit = prop.unitGroup.referenceUnit;
-			if (unit != null) {
-				ref.addProperty("refUnit", unit.name);
-			}
+		if (d.refUnit != null) {
+			ref.addProperty("refUnit", d.refUnit);
 		}
 	}
 

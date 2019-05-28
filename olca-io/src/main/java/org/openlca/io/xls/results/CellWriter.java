@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -19,7 +18,6 @@ import org.openlca.core.model.descriptors.FlowDescriptor;
 import org.openlca.core.model.descriptors.ImpactCategoryDescriptor;
 import org.openlca.core.model.descriptors.ProcessDescriptor;
 import org.openlca.io.CategoryPair;
-import org.openlca.io.DisplayValues;
 import org.openlca.io.xls.Excel;
 
 import com.google.common.base.Strings;
@@ -30,7 +28,6 @@ import com.google.common.base.Strings;
 public class CellWriter {
 
 	private final EntityCache cache;
-	private final HashMap<Long, String> flowUnits = new HashMap<>();
 	private final CellStyles styles;
 
 	public CellWriter(EntityCache cache, Workbook wb) {
@@ -92,7 +89,7 @@ public class CellWriter {
 				flowCat.getCategory(), false);
 		cell(sheet, isRow ? row : row++, !isRow ? col : col++,
 				flowCat.getSubCategory(), false);
-		cell(sheet, isRow ? row : row++, !isRow ? col : col++, flowUnit(flow),
+		cell(sheet, isRow ? row : row++, !isRow ? col : col++, flow.refUnit,
 				false);
 	}
 
@@ -205,15 +202,6 @@ public class CellWriter {
 		}
 		cell.setCellStyle(style);
 		return cell;
-	}
-
-	private String flowUnit(FlowDescriptor flow) {
-		String unit = flowUnits.get(flow.id);
-		if (unit != null)
-			return unit;
-		unit = DisplayValues.referenceUnit(flow, cache);
-		flowUnits.put(flow.id, unit == null ? "" : unit);
-		return unit;
 	}
 
 }

@@ -54,46 +54,52 @@ public class InventoryHandler {
 		return utils.contributionFlow(req, (result, flow, cache) -> {
 			List<ContributionItem<CategorizedDescriptor>> contributions = result
 					.getProcessContributions(flow).contributions;
-			contributions = utils.filter(contributions, contribution -> contribution.amount != 0);
-			String unit = utils.getUnit(flow, cache);
-			return JsonRpc.encode(contributions, cache, json -> json.addProperty("unit", unit));
+			contributions = utils.filter(contributions,
+					contribution -> contribution.amount != 0);
+			return JsonRpc.encode(contributions, cache,
+					json -> json.addProperty("unit", flow.refUnit));
 		});
 	}
 
 	@Rpc("get/inventory/contributions/locations")
 	public RpcResponse getLocationContributions(RpcRequest req) {
 		return utils.contributionFlow(req, (result, flow, cache) -> {
-			LocationContribution calculator = new LocationContribution(result, cache);
+			LocationContribution calculator = new LocationContribution(result,
+					cache);
 			List<ContributionItem<LocationDescriptor>> contributions = utils
 					.toDescriptors(calculator.calculate(flow).contributions);
-			contributions = utils.filter(contributions, contribution -> contribution.amount != 0);
-			String unit = utils.getUnit(flow, cache);
-			return JsonRpc.encode(contributions, cache, json -> json.addProperty("unit", unit));
+			contributions = utils.filter(contributions,
+					contribution -> contribution.amount != 0);
+			return JsonRpc.encode(contributions, cache,
+					json -> json.addProperty("unit", flow.refUnit));
 		});
 	}
 
 	@Rpc("get/inventory/contributions/location/processes")
 	public RpcResponse getProcessContributionsForLocation(RpcRequest req) {
-		return utils.contributionFlowLocation(req, (result, flow, location, cache) -> {
-			List<ContributionItem<CategorizedDescriptor>> contributions = result
-					.getProcessContributions(flow).contributions;
-			contributions = utils.filter(contributions, contribution -> {
-				if (contribution.item instanceof ProcessDescriptor) {
-					if (((ProcessDescriptor) contribution.item).location != location.id) {
-						return false;
-					}
-				}
-				return contribution.amount != 0;
-			});
-			String unit = utils.getUnit(flow, cache);
-			return JsonRpc.encode(contributions, cache, json -> json.addProperty("unit", unit));
-		});
+		return utils.contributionFlowLocation(req,
+				(result, flow, location, cache) -> {
+					List<ContributionItem<CategorizedDescriptor>> contributions = result
+							.getProcessContributions(flow).contributions;
+					contributions = utils.filter(contributions,
+							contribution -> {
+								if (contribution.item instanceof ProcessDescriptor) {
+									if (((ProcessDescriptor) contribution.item).location != location.id) {
+										return false;
+									}
+								}
+								return contribution.amount != 0;
+							});
+					return JsonRpc.encode(contributions, cache,
+							json -> json.addProperty("unit", flow.refUnit));
+				});
 	}
 
 	@Rpc("get/inventory/total_requirements")
 	public RpcResponse getTotalRequirements(RpcRequest req) {
 		return utils.contribution(req, (result, cache) -> {
-			return JsonRpc.encode(result.totalRequirements, null, result.techIndex, cache);
+			return JsonRpc.encode(result.totalRequirements, null,
+					result.techIndex, cache);
 		});
 	}
 
@@ -122,10 +128,10 @@ public class InventoryHandler {
 				c.share = c.amount / total;
 				if (c.amount == 0)
 					return;
-				String unit = utils.getUnit(flow, cache);
 				contributions.add(JsonRpc.encode(c, cache, json -> {
-					json.addProperty("unit", unit);
-					json.addProperty("upstream", result.getUpstreamFlowResult(process, flow));
+					json.addProperty("unit", flow.refUnit);
+					json.addProperty("upstream",
+							result.getUpstreamFlowResult(process, flow));
 				}));
 			});
 			return contributions;
@@ -138,9 +144,8 @@ public class InventoryHandler {
 			List<StringPair> products = utils.parseProducts(req);
 			UpstreamTree tree = result.getTree(flow);
 			List<UpstreamNode> results = Upstream.calculate(tree, products);
-			String unit = utils.getUnit(flow, cache);
 			return JsonRpc.encode(results, tree, cache, json -> {
-				json.addProperty("unit", unit);
+				json.addProperty("unit", flow.refUnit);
 				json.add("upstream", json.remove("amount"));
 			});
 		});

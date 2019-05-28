@@ -1,5 +1,11 @@
 package org.openlca.io.xls;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.Writer;
+import java.util.Collections;
+import java.util.HashMap;
+
 import org.openlca.core.database.EntityCache;
 import org.openlca.core.math.CalculationSetup;
 import org.openlca.core.math.CalculationType;
@@ -12,16 +18,9 @@ import org.openlca.core.matrix.format.IMatrix;
 import org.openlca.core.model.AllocationMethod;
 import org.openlca.core.model.descriptors.FlowDescriptor;
 import org.openlca.io.CategoryPair;
-import org.openlca.io.DisplayValues;
 import org.openlca.julia.JuliaSolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.Writer;
-import java.util.Collections;
-import java.util.HashMap;
 
 /**
  * Writes a product system as matrices into CSV files.
@@ -145,17 +144,15 @@ public class CsvMatrixExport implements Runnable {
 		buffer.newLine();
 	}
 
-	private void writeName(FlowDescriptor flow, Writer buffer) {
+	private void writeName(FlowDescriptor flow, Writer buffer)
+			throws Exception {
 		if (flow == null)
 			return;
 		String name = flow.name;
-		try {
-			String unit = DisplayValues.referenceUnit(flow, cache);
-			name = name.concat(" [").concat(unit).concat("]");
-			quote(name, buffer);
-		} catch (Exception e) {
-			log.error("Failed to load ref-unit", e);
+		if (flow.refUnit != null) {
+			name = name.concat(" [").concat(flow.refUnit).concat("]");
 		}
+		quote(name, buffer);
 	}
 
 	private void writeValue(double d, Writer buffer) throws Exception {
