@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.openlca.core.database.IDatabase;
-import org.openlca.core.database.LocationDao;
-import org.openlca.core.database.NativeSql;
+import org.openlca.core.database.ProcessDao;
 import org.openlca.core.model.Location;
 import org.openlca.core.model.descriptors.CategorizedDescriptor;
 import org.openlca.core.model.descriptors.FlowDescriptor;
@@ -35,31 +33,13 @@ public class LocationContribution {
 		if (result == null)
 			return;
 
-		// index process locations
-		Map<Long, Location> locations = new LocationDao(db).getAll()
-				.stream().collect(Collectors.toMap(
-						loc -> loc.id, loc -> loc));
-		Map<Long, Location> processLocs = new HashMap<>();
-		String sql = "select id, f_location from tbl_processes";
-		try {
-			NativeSql.on(db).query(sql, r -> {
-				long id = r.getLong(1);
-				long loc = r.getLong(2);
-				if (!r.wasNull()) {
-					processLocs.put(id, locations.get(loc));
-				}
-				return true;
-			});
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-
+		Map<Long, Location> locs = new ProcessDao(db).getProcessLocations();
 		// group processes by location
 		for (CategorizedDescriptor d : result.getProcesses()) {
 			Location loc = null;
 			if (d instanceof ProcessDescriptor) {
 				ProcessDescriptor p = (ProcessDescriptor) d;
-				loc = processLocs.get(p.id);
+				loc = locs.get(p.id);
 			}
 			List<CategorizedDescriptor> list = index.get(loc);
 			if (list == null) {

@@ -10,7 +10,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.openlca.core.model.Location;
 import org.openlca.core.model.Process;
 import org.openlca.core.model.ProcessType;
 import org.openlca.core.model.descriptors.FlowDescriptor;
@@ -116,10 +118,32 @@ public class ProcessDao
 		return dao.getDescriptors(flowIds);
 	}
 
-	public boolean hasQuantitativeReference(long id) {
-		return hasQuantitativeReference(Collections.singleton(id)).get(id);
+	/**
+	 * Returns the process locations of the database in a map: process ID ->
+	 * location.
+	 */
+	public Map<Long, Location> getProcessLocations() {
+		Map<Long, Location> locations = new LocationDao(database).getAll()
+				.stream().collect(Collectors.toMap(
+						loc -> loc.id, loc -> loc));
+		Map<Long, Location> processLocs = new HashMap<>();
+		String sql = "select id, f_location from tbl_processes";
+		try {
+			NativeSql.on(database).query(sql, r -> {
+				long id = r.getLong(1);
+				long loc = r.getLong(2);
+				if (!r.wasNull()) {
+					processLocs.put(id, locations.get(loc));
+				}
+				return true;
+			});
+			return processLocs;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
+	// TODO: this can be done much faster...
 	public Map<Long, Boolean> hasQuantitativeReference(Set<Long> ids) {
 		StringBuilder query = new StringBuilder();
 		query.append("SELECT id, f_quantitative_reference FROM tbl_processes ");
