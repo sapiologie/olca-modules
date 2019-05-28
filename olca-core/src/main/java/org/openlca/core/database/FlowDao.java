@@ -1,9 +1,11 @@
 package org.openlca.core.database;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,6 +17,46 @@ public class FlowDao extends CategorizedEntityDao<Flow, FlowDescriptor> {
 
 	public FlowDao(IDatabase database) {
 		super(Flow.class, FlowDescriptor.class, database);
+	}
+
+	@Override
+	public List<FlowDescriptor> getDescriptors() {
+		String sql = "SELECT id, ref_id, name, description, version, "
+				+ "last_change, f_category, flow_type, f_location, "
+				+ "f_reference_flow_property FROM tbl_flows";
+
+		ArrayList<FlowDescriptor> list = new ArrayList<>();
+		try {
+			NativeSql.on(database).query(sql, r -> {
+				FlowDescriptor d = new FlowDescriptor();
+				d.id = r.getLong(1);
+				d.refId = r.getString(2);
+				d.name = r.getString(3);
+				d.description = r.getString(4);
+				d.version = r.getLong(5);
+				d.lastChange = r.getLong(6);
+
+				long categoryID = r.getLong(7);
+				if (!r.wasNull()) {
+					d.category = categoryID;
+				}
+
+				String fType = r.getString(8);
+				if (fType != null) {
+					d.flowType = FlowType.valueOf(fType);
+				}
+				long locationID = r.getLong(9);
+				if (!r.wasNull()) {
+					d.location = locationID;
+				}
+				list.add(d);
+				return true;
+			});
+		} catch (Exception e) {
+			log.error("Failed to load descriptors", e);
+		}
+
+		return list;
 	}
 
 	@Override
