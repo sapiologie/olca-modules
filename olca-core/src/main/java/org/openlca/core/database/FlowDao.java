@@ -25,6 +25,7 @@ public class FlowDao extends CategorizedEntityDao<Flow, FlowDescriptor> {
 
 	private List<FlowDescriptor> descriptors(Predicate<ResultSet> filter) {
 		Map<Long, String> locations = Daos.locationCodes(database);
+		Map<Long, String> units = refUnits();
 		String sql = "SELECT id, ref_id, name, description, version, "
 				+ "last_change, f_category, flow_type, f_location, "
 				+ "f_reference_flow_property FROM tbl_flows";
@@ -51,10 +52,12 @@ public class FlowDao extends CategorizedEntityDao<Flow, FlowDescriptor> {
 				if (fType != null) {
 					d.flowType = FlowType.valueOf(fType);
 				}
+
 				long locationID = r.getLong(9);
 				if (!r.wasNull()) {
 					d.location = locations.get(locationID);
 				}
+				d.refUnit = units.get(d.id);
 				list.add(d);
 				return true;
 			});
@@ -62,7 +65,29 @@ public class FlowDao extends CategorizedEntityDao<Flow, FlowDescriptor> {
 			log.error("Failed to load descriptors", e);
 		}
 		return list;
+	}
 
+	/**
+	 * Collect the reference units from the database in a map: flow id -> unit
+	 * name.
+	 */
+	private Map<Long, String> refUnits() {
+		String sql = "select f.id, u.name from tbl_flows f" +
+				" inner join tbl_flow_properties p" +
+				" on f.f_reference_flow_property = p.id" +
+				" inner join tbl_unit_groups ug" +
+				" on p.f_unit_group = ug.id" +
+				" inner join tbl_units u on ug.f_reference_unit = u.id";
+		Map<Long, String> units = new HashMap<>();
+		try {
+			NativeSql.on(database).query(sql, r -> {
+				units.put(r.getLong(1), r.getString(2));
+				return true;
+			});
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return units;
 	}
 
 	@Override
@@ -113,10 +138,11 @@ public class FlowDao extends CategorizedEntityDao<Flow, FlowDescriptor> {
 		FlowDescriptor descriptor = super.createDescriptor(queryResult);
 		if (queryResult[7] instanceof String)
 			descriptor.flowType = FlowType.valueOf((String) queryResult[7]);
+		// TODO:
 		// descriptor.location = (Long) queryResult[8];
-		Long refProp = (Long) queryResult[9];
-		if (refProp != null)
-			descriptor.refFlowPropertyId = refProp;
+		// Long refProp = (Long) queryResult[9];
+		// if (refProp != null)
+		// descriptor.refFlowPropertyId = refProp;
 		return descriptor;
 	}
 

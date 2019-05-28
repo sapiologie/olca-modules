@@ -122,15 +122,18 @@ public class Descriptors {
 	public static FlowDescriptor toDescriptor(Flow flow) {
 		if (flow == null)
 			return null;
-		FlowDescriptor descriptor = new FlowDescriptor();
-		setBaseValues(flow, descriptor);
+		FlowDescriptor d = new FlowDescriptor();
+		setBaseValues(flow, d);
 		if (flow.location != null)
-			descriptor.location = flow.location.code;
+			d.location = flow.location.code;
 		FlowProperty refProp = flow.referenceFlowProperty;
-		if (refProp != null)
-			descriptor.refFlowPropertyId = refProp.id;
-		descriptor.flowType = flow.flowType;
-		return descriptor;
+		if (refProp != null
+				&& refProp.unitGroup != null
+				&& refProp.unitGroup.referenceUnit != null) {
+			d.refUnit = refProp.unitGroup.referenceUnit.name;
+		}
+		d.flowType = flow.flowType;
+		return d;
 	}
 
 	public static FlowPropertyDescriptor toDescriptor(

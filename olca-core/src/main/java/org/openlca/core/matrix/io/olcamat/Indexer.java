@@ -15,8 +15,6 @@ import org.openlca.core.model.Category;
 import org.openlca.core.model.FlowProperty;
 import org.openlca.core.model.Location;
 import org.openlca.core.model.RootEntity;
-import org.openlca.core.model.Unit;
-import org.openlca.core.model.UnitGroup;
 import org.openlca.core.model.descriptors.BaseDescriptor;
 import org.openlca.core.model.descriptors.FlowDescriptor;
 import org.openlca.core.model.descriptors.ProcessDescriptor;
@@ -73,17 +71,16 @@ class Indexer {
 			e.flowLocation = location.code;
 		}
 		e.flowCategory = category(f.category);
-		FlowProperty fp = flowProperties.get(f.refFlowPropertyId);
-		if (fp == null)
-			return;
-		e.flowPropertyID = fp.refId;
-		e.flowPropertyName = fp.name;
-		UnitGroup ug = fp.unitGroup;
-		if (ug == null || ug.referenceUnit == null)
-			return;
-		Unit u = ug.referenceUnit;
-		e.unitID = u.refId;
-		e.unitName = u.name;
+		/*
+		 * TODO: think about this:
+		 * 
+		 * FlowProperty fp = flowProperties.get(f.refFlowPropertyId); if (fp ==
+		 * null) return; e.flowPropertyID = fp.refId; e.flowPropertyName =
+		 * fp.name; UnitGroup ug = fp.unitGroup; if (ug == null ||
+		 * ug.referenceUnit == null) return; Unit u = ug.referenceUnit; e.unitID
+		 * = u.refId;
+		 */
+		e.unitName = f.refUnit;
 	}
 
 	TechIndexEntry getTechEntry(ProcessProduct product) {
