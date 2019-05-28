@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.openlca.core.database.EntityCache;
 import org.openlca.core.matrix.FlowIndex;
-import org.openlca.core.model.Location;
 import org.openlca.core.model.descriptors.FlowDescriptor;
 import org.openlca.io.CategoryPair;
 import org.openlca.io.DisplayValues;
@@ -42,10 +41,7 @@ class FlowInfo implements Comparable<FlowInfo> {
 			info.setCategory(catPair.getCategory());
 			info.setSubCategory(catPair.getSubCategory());
 			if (flow.location != null) {
-				Location location = cache.get(Location.class,
-						flow.location);
-				if (location != null)
-					info.setLocation(location.code);
+				info.setLocation(flow.location);
 			}
 			String unit = DisplayValues.referenceUnit(flow, cache);
 			info.setUnit(unit);

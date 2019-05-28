@@ -156,9 +156,8 @@ public class SimulationResultExport {
 		if (pp.flow != null) {
 			label += " | " + pp.flow.name;
 			if (pp.flow.location != null) {
-				Location loc = cache.get(Location.class, pp.flow.location);
-				if (loc != null) {
-					label += " - " + loc.code;
+				if (pp.flow.location != null) {
+					label += " - " + pp.flow.location;
 				}
 			}
 		}

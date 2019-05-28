@@ -1,5 +1,9 @@
 package org.openlca.core.database;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.openlca.core.model.AbstractEntity;
 import org.openlca.core.model.CategorizedEntity;
 import org.openlca.core.model.Exchange;
@@ -14,7 +18,8 @@ import org.openlca.core.model.descriptors.CategorizedDescriptor;
 public class Daos {
 
 	@SuppressWarnings("unchecked")
-	public static <T extends AbstractEntity> BaseDao<T> base(IDatabase database, Class<T> clazz) {
+	public static <T extends AbstractEntity> BaseDao<T> base(IDatabase database,
+			Class<T> clazz) {
 		if (database == null)
 			return null;
 		if (clazz == null)
@@ -22,18 +27,19 @@ public class Daos {
 		ModelType type = ModelType.forModelClass(clazz);
 		if (type != null)
 			return (BaseDao<T>) root(database, type);
-		if (clazz == Exchange.class) 
+		if (clazz == Exchange.class)
 			return (BaseDao<T>) new ExchangeDao(database);
-		if (clazz == MappingFile.class) 
+		if (clazz == MappingFile.class)
 			return (BaseDao<T>) new MappingFileDao(database);
-		if (clazz == ProcessGroupSet.class) 
+		if (clazz == ProcessGroupSet.class)
 			return (BaseDao<T>) new ProcessGroupSetDao(database);
-		if (clazz == ProjectVariant.class) 
+		if (clazz == ProjectVariant.class)
 			return (BaseDao<T>) new ProjectVariantDao(database);
 		return new BaseDao<>(clazz, database);
 	}
 
-	public static RootEntityDao<? extends RootEntity, ? extends BaseDescriptor> root(IDatabase database, ModelType type) {
+	public static RootEntityDao<? extends RootEntity, ? extends BaseDescriptor> root(
+			IDatabase database, ModelType type) {
 		if (database == null)
 			return null;
 		if (type == null)
@@ -49,7 +55,8 @@ public class Daos {
 		return null;
 	}
 
-	public static CategorizedEntityDao<? extends CategorizedEntity, ? extends CategorizedDescriptor> categorized(IDatabase database, ModelType type) {
+	public static CategorizedEntityDao<? extends CategorizedEntity, ? extends CategorizedDescriptor> categorized(
+			IDatabase database, ModelType type) {
 		if (database == null)
 			return null;
 		if (type == null)
@@ -90,5 +97,21 @@ public class Daos {
 		default:
 			return null;
 		}
+	}
+
+	static Map<Long, String> locationCodes(IDatabase db) {
+		if (db == null)
+			return Collections.emptyMap();
+		String sql = "select id, code from tbl_locations";
+		Map<Long, String> map = new HashMap<>();
+		try {
+			NativeSql.on(db).query(sql, r -> {
+				map.put(r.getLong(1), r.getString(2));
+				return true;
+			});
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return map;
 	}
 }

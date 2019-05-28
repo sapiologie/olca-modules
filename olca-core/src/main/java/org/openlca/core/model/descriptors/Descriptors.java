@@ -125,7 +125,7 @@ public class Descriptors {
 		FlowDescriptor descriptor = new FlowDescriptor();
 		setBaseValues(flow, descriptor);
 		if (flow.location != null)
-			descriptor.location = flow.location.id;
+			descriptor.location = flow.location.code;
 		FlowProperty refProp = flow.referenceFlowProperty;
 		if (refProp != null)
 			descriptor.refFlowPropertyId = refProp.id;
@@ -133,7 +133,8 @@ public class Descriptors {
 		return descriptor;
 	}
 
-	public static FlowPropertyDescriptor toDescriptor(FlowProperty flowProperty) {
+	public static FlowPropertyDescriptor toDescriptor(
+			FlowProperty flowProperty) {
 		if (flowProperty == null)
 			return null;
 		FlowPropertyDescriptor descriptor = new FlowPropertyDescriptor();
@@ -205,7 +206,8 @@ public class Descriptors {
 		return d;
 	}
 
-	public static ImpactCategoryDescriptor toDescriptor(ImpactCategory impactCategory) {
+	public static ImpactCategoryDescriptor toDescriptor(
+			ImpactCategory impactCategory) {
 		if (impactCategory == null)
 			return null;
 		ImpactCategoryDescriptor descriptor = new ImpactCategoryDescriptor();
@@ -231,13 +233,15 @@ public class Descriptors {
 		return descriptor;
 	}
 
-	private static void setBaseValues(CategorizedEntity entity, CategorizedDescriptor descriptor) {
+	private static void setBaseValues(CategorizedEntity entity,
+			CategorizedDescriptor descriptor) {
 		setBaseValues((RootEntity) entity, descriptor);
 		if (entity.category != null)
 			descriptor.category = entity.category.id;
 	}
 
-	private static void setBaseValues(RootEntity entity, BaseDescriptor descriptor) {
+	private static void setBaseValues(RootEntity entity,
+			BaseDescriptor descriptor) {
 		descriptor.refId = entity.refId;
 		descriptor.description = entity.description;
 		descriptor.id = entity.id;
@@ -246,7 +250,8 @@ public class Descriptors {
 		descriptor.version = entity.version;
 	}
 
-	private static CategorizedDescriptor createUnknownDescriptor(CategorizedEntity entity) {
+	private static CategorizedDescriptor createUnknownDescriptor(
+			CategorizedEntity entity) {
 		CategorizedDescriptor descriptor = new CategorizedDescriptor();
 		setBaseValues(entity, descriptor);
 		return descriptor;

@@ -5,7 +5,8 @@ import org.openlca.core.model.ModelType;
 
 public class FlowDescriptor extends CategorizedDescriptor {
 
-	public Long location;
+	/** An optional location code of the flow. */
+	public String location;
 	public FlowType flowType;
 	public long refFlowPropertyId;
 

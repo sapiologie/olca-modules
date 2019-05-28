@@ -120,10 +120,10 @@ public class Json {
 	}
 
 	/**
-	 * Returns the value of the `@id` field of the entity reference with the given
-	 * name. For example, the given object could be an exchange and the given
-	 * reference name could be `flow`, then, this method would return the reference
-	 * ID of the flow.
+	 * Returns the value of the `@id` field of the entity reference with the
+	 * given name. For example, the given object could be an exchange and the
+	 * given reference name could be `flow`, then, this method would return the
+	 * reference ID of the flow.
 	 */
 	public static String getRefId(JsonObject obj, String refName) {
 		JsonObject ref = getObject(obj, refName);
@@ -139,8 +139,8 @@ public class Json {
 	}
 
 	/**
-	 * Generates a `Ref` type as defined in olca-schema. For some types (e.g. flows
-	 * or processes) a more specific `Ref` type is used (e.g. `FlowRef` or
+	 * Generates a `Ref` type as defined in olca-schema. For some types (e.g.
+	 * flows or processes) a more specific `Ref` type is used (e.g. `FlowRef` or
 	 * `ProcessRef`) that contains additional meta-data.
 	 */
 	public static JsonObject asRef(BaseDescriptor d, EntityCache cache) {
@@ -173,8 +173,8 @@ public class Json {
 	}
 
 	/**
-	 * Generates a `Ref` type as defined in olca-schema. For some types (e.g. flows
-	 * or processes) a more specific `Ref` type is used (e.g. `FlowRef` or
+	 * Generates a `Ref` type as defined in olca-schema. For some types (e.g.
+	 * flows or processes) a more specific `Ref` type is used (e.g. `FlowRef` or
 	 * `ProcessRef`) that contains additional meta-data.
 	 */
 	public static JsonObject asDescriptor(BaseDescriptor d, EntityCache cache) {
@@ -224,10 +224,7 @@ public class Json {
 		if (cache == null)
 			return;
 		if (d.location != null) {
-			Location loc = cache.get(Location.class, d.location);
-			if (loc != null) {
-				ref.addProperty("location", loc.code);
-			}
+			ref.addProperty("location", d.location);
 		}
 		FlowProperty prop = cache.get(FlowProperty.class, d.refFlowPropertyId);
 		if (prop != null && prop.unitGroup != null) {

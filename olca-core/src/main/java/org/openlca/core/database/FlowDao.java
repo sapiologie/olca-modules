@@ -1,5 +1,6 @@
 package org.openlca.core.database;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,8 +8,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 
+import org.openlca.core.model.Category;
 import org.openlca.core.model.Flow;
 import org.openlca.core.model.FlowType;
 import org.openlca.core.model.descriptors.FlowDescriptor;
@@ -19,15 +23,17 @@ public class FlowDao extends CategorizedEntityDao<Flow, FlowDescriptor> {
 		super(Flow.class, FlowDescriptor.class, database);
 	}
 
-	@Override
-	public List<FlowDescriptor> getDescriptors() {
+	private List<FlowDescriptor> descriptors(Predicate<ResultSet> filter) {
+		Map<Long, String> locations = Daos.locationCodes(database);
 		String sql = "SELECT id, ref_id, name, description, version, "
 				+ "last_change, f_category, flow_type, f_location, "
 				+ "f_reference_flow_property FROM tbl_flows";
-
 		ArrayList<FlowDescriptor> list = new ArrayList<>();
 		try {
 			NativeSql.on(database).query(sql, r -> {
+				if (filter != null && !filter.test(r))
+					return true;
+
 				FlowDescriptor d = new FlowDescriptor();
 				d.id = r.getLong(1);
 				d.refId = r.getString(2);
@@ -47,7 +53,7 @@ public class FlowDao extends CategorizedEntityDao<Flow, FlowDescriptor> {
 				}
 				long locationID = r.getLong(9);
 				if (!r.wasNull()) {
-					d.location = locationID;
+					d.location = locations.get(locationID);
 				}
 				list.add(d);
 				return true;
@@ -55,8 +61,42 @@ public class FlowDao extends CategorizedEntityDao<Flow, FlowDescriptor> {
 		} catch (Exception e) {
 			log.error("Failed to load descriptors", e);
 		}
-
 		return list;
+
+	}
+
+	@Override
+	public List<FlowDescriptor> getDescriptors() {
+		return descriptors(null);
+	}
+
+	@Override
+	public List<FlowDescriptor> getDescriptors(Set<Long> ids) {
+		if (ids == null || ids.isEmpty())
+			return Collections.emptyList();
+		return descriptors(r -> {
+			try {
+				long id = r.getLong(1);
+				return ids.contains(id);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		});
+	}
+
+	@Override
+	public List<FlowDescriptor> getDescriptors(Optional<Category> category) {
+		if (category == null || !category.isPresent())
+			return descriptors(null);
+		long cid = category.get().id;
+		return descriptors(r -> {
+			try {
+				long rid = r.getLong(7);
+				return cid == rid;
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		});
 	}
 
 	@Override
@@ -73,7 +113,7 @@ public class FlowDao extends CategorizedEntityDao<Flow, FlowDescriptor> {
 		FlowDescriptor descriptor = super.createDescriptor(queryResult);
 		if (queryResult[7] instanceof String)
 			descriptor.flowType = FlowType.valueOf((String) queryResult[7]);
-		descriptor.location = (Long) queryResult[8];
+		// descriptor.location = (Long) queryResult[8];
 		Long refProp = (Long) queryResult[9];
 		if (refProp != null)
 			descriptor.refFlowPropertyId = refProp;
