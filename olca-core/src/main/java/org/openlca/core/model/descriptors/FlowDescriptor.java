@@ -16,6 +16,8 @@ public class FlowDescriptor extends CategorizedDescriptor {
 	 */
 	public String refUnit;
 
+	public String categoryPath;
+
 	public FlowDescriptor() {
 		this.type = ModelType.FLOW;
 	}

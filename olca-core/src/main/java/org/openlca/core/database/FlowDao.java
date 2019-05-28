@@ -26,6 +26,7 @@ public class FlowDao extends CategorizedEntityDao<Flow, FlowDescriptor> {
 	private List<FlowDescriptor> descriptors(Predicate<ResultSet> filter) {
 		Map<Long, String> locations = Daos.locationCodes(database);
 		Map<Long, String> units = refUnits();
+		CategoryPath category = new CategoryPath(database);
 		String sql = "SELECT id, ref_id, name, description, version, "
 				+ "last_change, f_category, flow_type, f_location, "
 				+ "f_reference_flow_property FROM tbl_flows";
@@ -46,6 +47,7 @@ public class FlowDao extends CategorizedEntityDao<Flow, FlowDescriptor> {
 				long categoryID = r.getLong(7);
 				if (!r.wasNull()) {
 					d.category = categoryID;
+					d.categoryPath = category.get(categoryID);
 				}
 
 				String fType = r.getString(8);
