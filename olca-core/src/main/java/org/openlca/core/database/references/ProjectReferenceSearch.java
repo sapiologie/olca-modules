@@ -19,15 +19,15 @@ import org.openlca.core.model.descriptors.ProjectDescriptor;
 
 public class ProjectReferenceSearch extends BaseParametrizedReferenceSearch<ProjectDescriptor> {
 
-	private final static Ref[] references = { 
-		new Ref(Category.class, "category", "f_category", true), 
-		new Ref(Actor.class, "author", "f_author", true),	
-		new Ref(ImpactMethod.class, "impactMethodId", "f_impact_method", true, true), 			
-		new Ref(NwSet.class, "nwSetId", "f_nwset", true, true) 			
+	private final static Ref[] references = {
+		new Ref(Category.class, "category", "f_category", true),
+		new Ref(Actor.class, "author", "f_author", true),
+		new Ref(ImpactMethod.class, "impactMethodId", "f_impact_method", true, true),
+		new Ref(NwSet.class, "nwSetId", "f_nwset", true, true)
 	};
-	private final static Ref[] variantReferences = { 
-		new Ref(ProductSystem.class, "productSystem", ProjectVariant.class, "variants", "f_product_system"), 
-		new Ref(FlowPropertyFactor.class, "flowPropertyFactor", ProjectVariant.class, "variants", "f_flow_property_factor"), 
+	private final static Ref[] variantReferences = {
+		new Ref(ProductSystem.class, "productSystem", ProjectVariant.class, "variants", "f_product_system"),
+		new Ref(FlowPropertyFactor.class, "flowPropertyFactor", ProjectVariant.class, "variants", "f_flow_property_factor"),
 		new Ref(Unit.class, "unit", ProjectVariant.class, "variants", "f_unit")
 	};
 
@@ -36,13 +36,13 @@ public class ProjectReferenceSearch extends BaseParametrizedReferenceSearch<Proj
 	}
 
 	@Override
-	public List<Reference> findReferences(Set<Long> ids) {
+	public List<Reference> of(Set<Long> ids) {
 		List<Reference> results = new ArrayList<>();
 		results.addAll(findReferences("tbl_projects", "id", ids, references));
 		results.addAll(findVariantReferences(ids));
 		return results;
 	}
-	
+
 	private List<Reference> findVariantReferences(Set<Long> ids) {
 		List<Reference> results = new ArrayList<>();
 		Map<Long, Long> variants = toIdMap(findReferences(

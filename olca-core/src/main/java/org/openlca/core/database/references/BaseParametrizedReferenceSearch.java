@@ -37,7 +37,7 @@ abstract class BaseParametrizedReferenceSearch<T extends CategorizedDescriptor> 
 		Map<Long, Set<String>> undeclared = findUndeclaredParameters(names, formulas);
 		Set<String> allUndeclared = merge(undeclared);
 		List<ParameterDescriptor> descriptors = new ParameterDao(database).getDescriptors(
-				allUndeclared.toArray(new String[allUndeclared.size()]), ParameterScope.GLOBAL);
+				allUndeclared.toArray(new String[0]), ParameterScope.GLOBAL);
 		List<Reference> results = toReferences(descriptors, false, undeclared);
 		Set<String> found = new HashSet<>();
 		for (ParameterDescriptor d : descriptors) {
@@ -94,7 +94,7 @@ abstract class BaseParametrizedReferenceSearch<T extends CategorizedDescriptor> 
 		collect(queries, names, null);
 		Set<String> allNames = merge(names);
 		List<ParameterDescriptor> descriptors = new ParameterDao(database).getDescriptors(
-				allNames.toArray(new String[allNames.size()]), ParameterScope.GLOBAL);
+				allNames.toArray(new String[0]), ParameterScope.GLOBAL);
 		List<Reference> references = toReferences(descriptors, false, names, idToOwnerId, nestedOwnerType,
 				nestedProperty);
 		references.addAll(createMissingParameterRedefReferences(names, descriptors, idToOwnerId, nestedProperty, nestedOwnerType));
@@ -146,8 +146,7 @@ abstract class BaseParametrizedReferenceSearch<T extends CategorizedDescriptor> 
 			if (set == null)
 				continue;
 			for (long ownerId : set) {
-				Class<? extends AbstractEntity> type = (Class<? extends AbstractEntity>)
-						descriptor.type.getModelClass();
+				Class<? extends AbstractEntity> type = descriptor.type.getModelClass();
 				long id = descriptor.id;
 				long nestedOwnerId = 0;
 				if (ownerIds != null) {
@@ -175,10 +174,7 @@ abstract class BaseParametrizedReferenceSearch<T extends CategorizedDescriptor> 
 	}
 
 	protected <V> void put(long key, V value, Map<Long, Set<V>> map) {
-		Set<V> values = map.get(key);
-		if (values == null) {
-			map.put(key, values = new HashSet<>());
-		}
+		Set<V> values = map.computeIfAbsent(key, k -> new HashSet<>());
 		values.add(value);
 	}
 

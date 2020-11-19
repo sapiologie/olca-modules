@@ -12,9 +12,9 @@ import org.openlca.core.model.descriptors.FlowPropertyDescriptor;
 public class FlowPropertyReferenceSearch extends
 		BaseReferenceSearch<FlowPropertyDescriptor> {
 
-	private final static Ref[] references = { 
+	private final static Ref[] references = {
 		new Ref(Category.class, "category", "f_category", true),
-		new Ref(UnitGroup.class, "unitGroup", "f_unit_group") 
+		new Ref(UnitGroup.class, "unitGroup", "f_unit_group")
 	};
 
 	public FlowPropertyReferenceSearch(IDatabase database, boolean includeOptional) {
@@ -22,7 +22,7 @@ public class FlowPropertyReferenceSearch extends
 	}
 
 	@Override
-	public List<Reference> findReferences(Set<Long> ids) {
+	public List<Reference> of(Set<Long> ids) {
 		return findReferences("tbl_flow_properties", "id", ids, references);
 	}
 

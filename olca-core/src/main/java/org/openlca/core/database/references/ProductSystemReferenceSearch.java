@@ -16,8 +16,8 @@ import org.openlca.core.model.descriptors.ProductSystemDescriptor;
 
 public class ProductSystemReferenceSearch extends BaseParametrizedReferenceSearch<ProductSystemDescriptor> {
 
-	private final static Ref[] references = { 
-		// don't include reference process, because it is also included in 
+	private final static Ref[] references = {
+		// don't include reference process, because it is also included in
 		// list of all processes (avoid duplicate reference)
 		new Ref(Category.class, "category", "f_category", true),
 		new Ref(Exchange.class, "referenceExchange", "f_reference_exchange"),
@@ -40,7 +40,7 @@ public class ProductSystemReferenceSearch extends BaseParametrizedReferenceSearc
 	}
 
 	@Override
-	public List<Reference> findReferences(Set<Long> ids) {
+	public List<Reference> of(Set<Long> ids) {
 		List<Reference> results = new ArrayList<>();
 		results.addAll(findReferences("tbl_product_systems", "id", ids, references));
 		results.addAll(findProcesses(ids));
@@ -48,14 +48,14 @@ public class ProductSystemReferenceSearch extends BaseParametrizedReferenceSearc
 		results.addAll(findParameterRedefs(ids));
 		return results;
 	}
-	
-	
+
+
 	private List<Reference> findProcesses(Set<Long> ids) {
 		return findReferences("tbl_product_system_processes", "f_product_system", ids, processReferences);
 	}
-	
-	private List<Reference> findLinkReferences(Set<Long> ids) { 
+
+	private List<Reference> findLinkReferences(Set<Long> ids) {
 		return findReferences("tbl_process_links", "f_product_system", ids, linkReferences);
 	}
-	
+
 }

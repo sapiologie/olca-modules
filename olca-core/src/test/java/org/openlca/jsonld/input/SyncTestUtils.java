@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 
 import org.openlca.core.Tests;
 import org.openlca.core.database.IDatabase;
-import org.openlca.core.database.references.IReferenceSearch;
 import org.openlca.core.database.references.Reference;
+import org.openlca.core.database.references.References;
 import org.openlca.core.model.ModelType;
 import org.openlca.jsonld.ZipStore;
 
@@ -47,9 +47,7 @@ class SyncTestUtils {
 					.stream()
 					.map(e -> e.id)
 					.collect(Collectors.toSet());
-			var refs = IReferenceSearch.FACTORY
-					.createFor(type, db, true)
-					.findReferences(ids);
+			var refs = References.of(db, type, ids);
 			for (var ref : refs) {
 				if (!isValid.test(ref))
 					return false;

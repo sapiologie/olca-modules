@@ -10,8 +10,8 @@ import org.openlca.core.model.descriptors.DQSystemDescriptor;
 
 public class DQSystemReferenceSearch extends BaseReferenceSearch<DQSystemDescriptor> {
 
-	private final static Ref[] references = { 
-		new Ref(Source.class, "source", "f_source", true), 
+	private final static Ref[] references = {
+		new Ref(Source.class, "source", "f_source", true),
 	};
 
 	public DQSystemReferenceSearch(IDatabase database, boolean includeOptional) {
@@ -19,7 +19,7 @@ public class DQSystemReferenceSearch extends BaseReferenceSearch<DQSystemDescrip
 	}
 
 	@Override
-	public List<Reference> findReferences(Set<Long> ids) {
+	public List<Reference> of(Set<Long> ids) {
 		return findReferences("tbl_dq_systems", "id", ids, references);
 	}
 

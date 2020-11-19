@@ -16,7 +16,7 @@ public class SocialIndicatorReferenceSearch extends
 	private final static Ref[] references = {
 		new Ref(Category.class, "category", "f_category", true),
 		new Ref(FlowProperty.class, "activityQuantity", "f_activity_quantity", true),
-		new Ref(Unit.class, "activityUnit", "f_activity_unit", true) 
+		new Ref(Unit.class, "activityUnit", "f_activity_unit", true)
 	};
 
 	public SocialIndicatorReferenceSearch(IDatabase database, boolean includeOptional) {
@@ -24,7 +24,7 @@ public class SocialIndicatorReferenceSearch extends
 	}
 
 	@Override
-	public List<Reference> findReferences(Set<Long> ids) {
+	public List<Reference> of(Set<Long> ids) {
 		return findReferences("tbl_social_indicators", "id", ids, references);
 	}
 

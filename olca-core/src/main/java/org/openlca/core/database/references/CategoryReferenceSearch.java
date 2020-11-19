@@ -10,8 +10,8 @@ import org.openlca.core.model.descriptors.CategoryDescriptor;
 public class CategoryReferenceSearch extends
 		BaseReferenceSearch<CategoryDescriptor> {
 
-	private final static Ref[] references = { 
-		new Ref(Category.class, "category", "f_category", true) 
+	private final static Ref[] references = {
+		new Ref(Category.class, "category", "f_category", true)
 	};
 
 	public CategoryReferenceSearch(IDatabase database, boolean includeOptional) {
@@ -19,7 +19,7 @@ public class CategoryReferenceSearch extends
 	}
 
 	@Override
-	public List<Reference> findReferences(Set<Long> ids) {
+	public List<Reference> of(Set<Long> ids) {
 		return findReferences("tbl_categories", "id", ids, references);
 	}
 

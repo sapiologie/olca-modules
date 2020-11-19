@@ -12,17 +12,17 @@ import org.openlca.core.model.descriptors.UnitGroupDescriptor;
 public class UnitGroupReferenceSearch extends
 		BaseReferenceSearch<UnitGroupDescriptor> {
 
-	private final static Ref[] references = { 
+	private final static Ref[] references = {
 		new Ref(Category.class, "category", "f_category", true),
-		new Ref(FlowProperty.class, "defaultFlowProperty", "f_default_flow_property", true) 
+		new Ref(FlowProperty.class, "defaultFlowProperty", "f_default_flow_property", true)
 	};
-	
+
 	public UnitGroupReferenceSearch(IDatabase database, boolean includeOptional) {
 		super(database, UnitGroup.class, includeOptional);
 	}
 
 	@Override
-	public List<Reference> findReferences(Set<Long> ids) {
+	public List<Reference> of(Set<Long> ids) {
 		return findReferences("tbl_unit_groups", "id", ids, references);
 	}
 

@@ -123,8 +123,7 @@ public abstract class BaseReferenceSearchTest {
 
 	protected List<Reference> findReferences(Set<Long> ids) {
 		ModelType type = getModelType();
-		IReferenceSearch<?> search = IReferenceSearch.FACTORY.createFor(type, Tests.getDb(), true);
-		return search.findReferences(ids);
+		return References.of(Tests.getDb(), type, ids);
 	}
 
 	protected final <T extends CategorizedEntity> T insertAndAddExpected(String property, T entity) {

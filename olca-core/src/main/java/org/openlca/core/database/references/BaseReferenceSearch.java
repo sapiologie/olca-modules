@@ -15,7 +15,7 @@ import org.openlca.core.model.descriptors.Descriptor;
 import org.openlca.core.model.descriptors.CategorizedDescriptor;
 
 abstract class BaseReferenceSearch<T extends CategorizedDescriptor> implements
-		IReferenceSearch<T> {
+		IReferenceSearch {
 
 	protected final IDatabase database;
 	protected final Class<? extends CategorizedEntity> type;
@@ -29,32 +29,6 @@ abstract class BaseReferenceSearch<T extends CategorizedDescriptor> implements
 		this.database = database;
 		this.type = type;
 		this.includeOptional = includeOptional;
-	}
-
-	@Override
-	public List<Reference> findReferences() {
-		return findReferences(new HashSet<>());
-	}
-
-	@Override
-	public List<Reference> findReferences(T descriptor) {
-		if (descriptor == null || descriptor.id == 0L)
-			return Collections.emptyList();
-		return findReferences(Collections.singletonList(descriptor));
-	}
-
-	@Override
-	public List<Reference> findReferences(List<T> descriptors) {
-		if (descriptors == null || descriptors.isEmpty())
-			return Collections.emptyList();
-		return findReferences(toIdSet(descriptors));
-	}
-
-	@Override
-	public List<Reference> findReferences(long id) {
-		if (id == 0L)
-			return Collections.emptyList();
-		return findReferences(Collections.singleton(id));
 	}
 
 	protected List<Reference> findReferences(String table, String idField, Set<Long> ids, Ref[] references) {

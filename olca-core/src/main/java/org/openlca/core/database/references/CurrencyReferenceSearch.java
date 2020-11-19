@@ -11,9 +11,9 @@ import org.openlca.core.model.descriptors.CurrencyDescriptor;
 public class CurrencyReferenceSearch extends
 		BaseReferenceSearch<CurrencyDescriptor> {
 
-	private final static Ref[] references = { 
-		new Ref(Category.class, "category", "f_category", true), 
-		new Ref(Currency.class, "referenceCurrency", "f_reference_currency") 
+	private final static Ref[] references = {
+		new Ref(Category.class, "category", "f_category", true),
+		new Ref(Currency.class, "referenceCurrency", "f_reference_currency")
 	};
 
 	public CurrencyReferenceSearch(IDatabase database, boolean includeOptional) {
@@ -21,7 +21,7 @@ public class CurrencyReferenceSearch extends
 	}
 
 	@Override
-	public List<Reference> findReferences(Set<Long> ids) {
+	public List<Reference> of(Set<Long> ids) {
 		return findReferences("tbl_currencies", "id", ids, references);
 	}
 

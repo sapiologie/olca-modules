@@ -30,7 +30,7 @@ public class ParameterReferenceSearch extends BaseParametrizedReferenceSearch<Pa
 	}
 
 	@Override
-	public List<Reference> findReferences(Set<Long> ids) {
+	public List<Reference> of(Set<Long> ids) {
 		List<Reference> results = new ArrayList<>();
 		results.addAll(findReferences("tbl_parameters", "id", ids, references));
 		results.addAll(findParameterReferences(ids));
@@ -44,11 +44,11 @@ public class ParameterReferenceSearch extends BaseParametrizedReferenceSearch<Pa
 		Set<String> names = new HashSet<>();
 		for (Long key : variables.keySet())
 			names.addAll(variables.get(key));
-		List<Reference> results = new ArrayList<>();
 		List<ParameterDescriptor> descriptors = new ParameterDao(database)
-				.getDescriptors(names.toArray(new String[names.size()]),
+				.getDescriptors(names.toArray(new String[0]),
 						ParameterScope.GLOBAL);
-		results.addAll(toReferences(descriptors, false, variables));
+		List<Reference> results = new ArrayList<>(
+				toReferences(descriptors, false, variables));
 		Set<String> found = new HashSet<>();
 		for (ParameterDescriptor d : descriptors)
 			found.add(d.name.toLowerCase());
@@ -74,9 +74,8 @@ public class ParameterReferenceSearch extends BaseParametrizedReferenceSearch<Pa
 		for (String formulaQuery : formulaQueries)
 			Search.on(database, null).query(formulaQuery, (result) -> {
 				long ownerId = result.getLong(1);
-				Set<String> set = variables.get(ownerId);
-				if (set == null)
-					variables.put(ownerId, set = new HashSet<>());
+				Set<String> set = variables.computeIfAbsent(
+						ownerId, k -> new HashSet<>());
 				try {
 					set.addAll(Formula.getVariables(result.getString(2)));
 				} catch (Throwable e) {

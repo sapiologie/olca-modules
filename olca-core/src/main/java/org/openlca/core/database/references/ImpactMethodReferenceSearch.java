@@ -47,7 +47,7 @@ public class ImpactMethodReferenceSearch extends BaseParametrizedReferenceSearch
 	}
 
 	@Override
-	public List<Reference> findReferences(Set<Long> ids) {
+	public List<Reference> of(Set<Long> ids) {
 		List<Reference> results = new ArrayList<>();
 		results.addAll(findReferences("tbl_impact_methods", "id", ids, references));
 		results.addAll(findFactorReferences(ids));

@@ -16,22 +16,22 @@ import org.openlca.core.model.descriptors.FlowDescriptor;
 public class FlowReferenceSearch extends
 		BaseReferenceSearch<FlowDescriptor> {
 
-	private final static Ref[] references = { 
+	private final static Ref[] references = {
 		new Ref(Category.class, "category", "f_category", true),
-		new Ref(Location.class, "location", "f_location", true) 
+		new Ref(Location.class, "location", "f_location", true)
 	};
-	private final static Ref[] factorReferences = { 
+	private final static Ref[] factorReferences = {
 		new Ref(FlowProperty.class, "flowProperty", FlowPropertyFactor.class, "flowPropertyFactors", "f_flow_property")
 	};
-	
+
 	public FlowReferenceSearch(IDatabase database, boolean includeOptional) {
 		super(database, Flow.class, includeOptional);
 	}
 
 	@Override
-	public List<Reference> findReferences(Set<Long> ids) {
-		List<Reference> results = new ArrayList<>();
-		results.addAll(findReferences("tbl_flows", "id", ids, references));
+	public List<Reference> of(Set<Long> ids) {
+		List<Reference> results = new ArrayList<>(
+				findReferences("tbl_flows", "id", ids, references));
 		Map<Long, Long> factors = toIdMap(findReferences(
 				"tbl_flow_property_factors", "f_flow", ids,
 				new Ref[] { new Ref(FlowPropertyFactor.class, "id", "id") }));

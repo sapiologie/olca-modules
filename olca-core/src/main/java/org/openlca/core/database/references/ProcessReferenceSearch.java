@@ -64,10 +64,9 @@ public class ProcessReferenceSearch
 	}
 
 	@Override
-	public List<Reference> findReferences(Set<Long> ids) {
+	public List<Reference> of(Set<Long> ids) {
 		List<Reference> mixed = findReferences("tbl_processes", "id", ids, references);
-		List<Reference> results = new ArrayList<>();
-		results.addAll(filter(CategorizedEntity.class, mixed));
+		List<Reference> results = new ArrayList<>(filter(CategorizedEntity.class, mixed));
 		Map<Long, Long> docIds = toIdMap(filter(ProcessDocumentation.class, mixed));
 		results.addAll(findExchangeReferences(ids));
 		results.addAll(findSocialAspectReferences(ids));
@@ -77,7 +76,7 @@ public class ProcessReferenceSearch
 	}
 
 	private List<Reference> findExchangeReferences(Set<Long> ids) {
-		Map<Long, Long> exchanges = toIdMap(findReferences("tbl_exchanges", "f_owner", ids, 
+		Map<Long, Long> exchanges = toIdMap(findReferences("tbl_exchanges", "f_owner", ids,
 				new Ref[] { new Ref(Exchange.class, "id", "id") }));
 		List<Reference> references = findReferences("tbl_exchanges", "id", exchanges.keySet(), exchanges, exchangeReferences);
 		List<Reference> factors = new ArrayList<>();

@@ -72,10 +72,10 @@ public final class References {
 		var search = searchOf(db, type);
 		return search == null
 				? Collections.emptyList()
-				: search.findReferences(owners);
+				: search.of(owners);
 	}
 
-	private static IReferenceSearch<?> searchOf(IDatabase db, ModelType type) {
+	private static IReferenceSearch searchOf(IDatabase db, ModelType type) {
 		if (type == null)
 			return null;
 
