@@ -19,28 +19,28 @@ public class Reference implements Serializable {
 	 * The owner of the reference, e.g. if a process has a reference to a
 	 * location, the process is the owner.
 	 */
-	public final long ownerId;
+	public long ownerId;
 
 	/**
 	 * The type of the owner of the references.
 	 */
-	public final String ownerType;
+	public String ownerType;
 
 	/**
 	 * The ID of the referenced entity $e_r$
 	 */
-	public final long id;
+	public long id;
 
 	/**
 	 * The type of the referenced entity $e_r$.
 	 */
-	public final String type;
+	public String type;
 
 	/**
 	 * This is typically the name of the field in which the reference is stored
 	 * in the owner $e_o$.
 	 */
-	public final String property;
+	public String property;
 
 	/**
 	 * The can be intermediate objects in a reference between an owner $e_o$ and
@@ -48,18 +48,18 @@ public class Reference implements Serializable {
 	 * -> flow, the exchange would be such an intermediate object. This field
 	 * holds the ID of such an intermediate object in this case.
 	 */
-	public final long nestedOwnerId;
+	public long nestedOwnerId;
 
 	/**
 	 * The type of the intermediate object, if present.
 	 */
-	public final String nestedOwnerType;
+	public String nestedOwnerType;
 
 	/**
 	 * The field in which the intermediate object is stored in the owner $e_o$
 	 * if present.
 	 */
-	public final String nestedProperty;
+	public String nestedProperty;
 
 	/**
 	 * Indicates whether a reference is optional or not. In general a reference
@@ -67,7 +67,7 @@ public class Reference implements Serializable {
 	 * broken. For example, the unit of an exchange is not optional but the
 	 * data set generator of a process is.
 	 */
-	public final boolean optional;
+	public boolean optional;
 
 	public Reference(String property, Class<? extends AbstractEntity> type, long id,
 					 Class<? extends AbstractEntity> ownerType, long ownerId) {
@@ -93,6 +93,50 @@ public class Reference implements Serializable {
 		this.nestedOwnerType = nestedOwnerType != null ? nestedOwnerType.getCanonicalName() : null;
 		this.nestedOwnerId = nestedOwnerId;
 		this.optional = optional;
+	}
+
+	private Reference () {
+	}
+
+	static Reference ownerID(long ownerID) {
+		var ref = new Reference();
+		ref.ownerId = ownerID;
+		return ref;
+	}
+
+	Reference ownerType(Class<?> ownerType) {
+		this.ownerType = ownerType.getCanonicalName();
+		return this;
+	}
+
+	Reference property(String property) {
+		this.property = property;
+		return this;
+	}
+
+	Reference referencedID(long refID) {
+		this.id = refID;
+		return this;
+	}
+
+	Reference referencedType(Class<?> refType) {
+		this.type = refType.getCanonicalName();
+		return this;
+	}
+
+	Reference nestedOwnerID(long nestedID) {
+		this.nestedOwnerId = nestedID;
+		return this;
+	}
+
+	Reference nestedOwnerType(Class<?> nestedType) {
+		this.nestedOwnerType = nestedType.getCanonicalName();
+		return this;
+	}
+
+	Reference nestedProperty(String nestedProperty) {
+		this.nestedProperty = nestedProperty;
+		return this;
 	}
 
 	@SuppressWarnings("unchecked")

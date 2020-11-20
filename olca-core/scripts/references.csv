@@ -1,0 +1,19 @@
+table                     ; owner_column      ; owner_type     ; nested_column ; nested_type        ; nested_property     ; ref_column           ; ref_type       ; property          ; is_optional
+tbl_categories            ; id                ; Category       ;               ;                    ;                     ; f_category           ; Category       ; category          ; true
+tbl_currencies            ; id                ; Currency       ;               ;                    ;                     ; f_category           ; Category       ; category          ; true
+tbl_currencies            ; id                ; Currency       ;               ;                    ;                     ; f_reference_currency ; Currency       ; referenceCurrency ; false
+tbl_dq_systems            ; id                ; DQSystem       ;               ;                    ;                     ; f_category           ; Category       ; category          ; true
+tbl_dq_systems            ; id                ; DQSystem       ;               ;                    ;                     ; f_source             ; Source         ; source            ; true
+tbl_flow_properties       ; id                ; FlowProperty   ;               ;                    ;                     ; f_category           ; Category       ; category          ; true
+tbl_flow_properties       ; id                ; FlowProperty   ;               ;                    ;                     ; t_unit_group         ; UnitGroup      ; unitGroup         ; false
+tbl_flows                 ; id                ; Flow           ;               ;                    ;                     ; f_category           ; Category       ; category          ; true
+tbl_flows                 ; id                ; Flow           ;               ;                    ;                     ; f_location           ; Location       ; location          ; true
+tbl_flow_property_factors ; f_flow            ; Flow           ; id            ; FlowPropertyFactor ; flowPropertyFactors ; f_flow_property      ; FlowProperty   ; flowProperty      ; false
+tbl_impact_methods        ; id                ; ImpactMethod   ;               ;                    ;                     ; f_category           ; Category       ; category          ; true
+tbl_impact_methods        ; id                ; ImpactMethod   ;               ;                    ;                     ; f_author             ; Actor          ; author            ; true
+tbl_impact_methods        ; id                ; ImpactMethod   ;               ;                    ;                     ; f_generator          ; Actor          ; generator         ; true
+tbl_impact_links          ; f_impact_method   ; ImpactMehod    ;               ;                    ;                     ; f_impact_category    ; ImpactCategory ; impactCategories  ; false
+tbl_source_links          ; f_owner           ; ImpactMethod   ;               ;                    ;                     ; f_source             ; Source         ; sources           ; true
+tbl_impact_categories     ; id                ; ImpactCategory ;               ;                    ;                     ; f_category           ; Category       ; category          ; true
+tbl_impact_factors        ; f_impact_category ; ImpactCategory ; id            ;
+

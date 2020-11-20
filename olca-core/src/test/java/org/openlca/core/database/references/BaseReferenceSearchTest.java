@@ -100,8 +100,8 @@ public abstract class BaseReferenceSearchTest {
 	private Reference find(Reference reference, List<Reference> references,
 			long ownerId) {
 		for (Reference ref : references) {
-			if (!Strings.nullOrEqual(ref.property, reference.property))
-				continue;
+			//if (!Strings.nullOrEqual(ref.property, reference.property))
+			//	continue;
 			if (ref.getType() != reference.getType())
 				continue;
 			if (ref.id != reference.id)
@@ -110,8 +110,8 @@ public abstract class BaseReferenceSearchTest {
 				continue;
 			if (ref.ownerId != (reference.ownerId != 0L ? reference.ownerId : ownerId))
 				continue;
-			if (!Strings.nullOrEqual(ref.nestedProperty, reference.nestedProperty))
-				continue;
+			//if (!Strings.nullOrEqual(ref.nestedProperty, reference.nestedProperty))
+			//	continue;
 			if (ref.getNestedOwnerType() != reference.getNestedOwnerType())
 				continue;
 			if (ref.nestedOwnerId != reference.nestedOwnerId)
