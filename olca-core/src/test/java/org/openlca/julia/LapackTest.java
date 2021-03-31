@@ -7,19 +7,20 @@ import static org.junit.Assume.assumeTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openlca.nativelib.NativeLib;
 
 public class LapackTest {
 
 	@BeforeClass
 	public static void setUp() {
-		Julia.load();
+		NativeLib.load();
 	}
 
 	@Before
 	public void assumeLibsLoaded() {
 		// run the tests in this class only if the Julia libraries could be
 		// loaded
-		assumeTrue(Julia.isLoaded());
+		assumeTrue(NativeLib.isLoaded());
 	}
 
 	@Test

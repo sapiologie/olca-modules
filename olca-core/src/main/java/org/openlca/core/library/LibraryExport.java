@@ -15,8 +15,8 @@ import org.openlca.core.matrix.TechIndex;
 import org.openlca.core.matrix.io.MatrixExport;
 import org.openlca.core.model.AllocationMethod;
 import org.openlca.jsonld.Json;
-import org.openlca.julia.Julia;
-import org.openlca.julia.JuliaSolver;
+import org.openlca.nativelib.NativeLib;
+import org.openlca.nativelib.NativeSolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -216,12 +216,12 @@ public class LibraryExport implements Runnable {
 			return;
 		// we only pre-calculate the inverse etc. if the
 		// native can be loaded
-		if (!Julia.isLoaded()) {
-			if (!Julia.load())
+		if (!NativeLib.isLoaded()) {
+			if (!NativeLib.load())
 				return;
 		}
 		log.info("create matrix INV");
-		var solver = new JuliaSolver();
+		var solver = new NativeSolver();
 		var inv = solver.invert(data.techMatrix);
 		MatrixExport.toNpy(folder, inv, "INV");
 		if (data.flowMatrix == null)

@@ -3,25 +3,21 @@ package examples;
 import java.io.File;
 
 import org.openlca.core.database.Derby;
-import org.openlca.core.library.LibraryDir;
 import org.openlca.core.math.CalculationSetup;
 import org.openlca.core.math.SystemCalculator;
 import org.openlca.core.model.ImpactMethod;
 import org.openlca.core.model.Process;
 import org.openlca.core.model.ProductSystem;
 import org.openlca.core.model.descriptors.Descriptor;
-import org.openlca.julia.Julia;
+import org.openlca.nativelib.NativeLib;
 
 public class LibTest {
 
 	public static void main(String[] args) throws Exception {
-		Julia.load();
+		NativeLib.load();
 		var workspace = "C:/Users/Win10/openLCA-data-1.4";
 		var db = new Derby(new File(
 				workspace + "/databases/methods"));
-		var libDir = new LibraryDir(new File(
-				workspace + "/libraries"));
-
 
 		// var sysID = "12398baf-cb24-4017-a9db-47761f9688c6";
 		// var system = db.get(ProductSystem.class, sysID);

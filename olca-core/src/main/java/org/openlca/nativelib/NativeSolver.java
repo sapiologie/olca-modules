@@ -1,4 +1,4 @@
-package org.openlca.julia;
+package org.openlca.nativelib;
 
 import org.openlca.core.matrix.format.CSCMatrix;
 import org.openlca.core.matrix.format.DenseMatrix;
@@ -8,18 +8,22 @@ import org.openlca.core.matrix.format.MatrixConverter;
 import org.openlca.core.matrix.format.MatrixReader;
 import org.openlca.core.matrix.solvers.Factorization;
 import org.openlca.core.matrix.solvers.MatrixSolver;
+import org.openlca.julia.Julia;
+import org.openlca.nativelib.DenseFactorization;
+import org.openlca.nativelib.NativeLib;
+import org.openlca.nativelib.SparseFactorization;
 
-public class JuliaSolver implements MatrixSolver {
+public class NativeSolver implements MatrixSolver {
 
-	public JuliaSolver() {
-		if (!Julia.isLoaded()) {
-			Julia.load();
+	public NativeSolver() {
+		if (!NativeLib.isLoaded()) {
+			NativeLib.load();
 		}
 	}
 
 	@Override
 	public boolean hasSparseSupport() {
-		return Julia.hasSparseLibraries();
+		return NativeLib.hasSparseLibraries();
 	}
 
 	@Override
@@ -29,7 +33,7 @@ public class JuliaSolver implements MatrixSolver {
 
 	@Override
 	public double[] solve(MatrixReader a, int idx, double d) {
-		if (Julia.hasSparseLibraries() &&
+		if (NativeLib.hasSparseLibraries() &&
 				(a instanceof HashPointMatrix
 						|| a instanceof CSCMatrix)) {
 			var csc = CSCMatrix.of(a);

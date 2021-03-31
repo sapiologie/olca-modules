@@ -9,20 +9,23 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openlca.core.matrix.format.CSCMatrix;
 import org.openlca.core.matrix.format.HashPointMatrix;
+import org.openlca.nativelib.NativeLib;
+import org.openlca.nativelib.UmfFactorizedMatrix;
+import org.openlca.nativelib.Umfpack;
 
 public class UmfpackTest {
 
 	@BeforeClass
 	public static void setUp() {
-		Julia.load();
+		NativeLib.load();
 	}
 
 	@Before
 	public void assumeLibsLoaded() {
 		// run the tests in this class only if the Julia libraries could be
 		// loaded
-		assumeTrue(Julia.isLoaded());
-		assumeTrue(Julia.hasSparseLibraries());
+		assumeTrue(NativeLib.isLoaded());
+		assumeTrue(NativeLib.hasSparseLibraries());
 	}
 
 	@Test

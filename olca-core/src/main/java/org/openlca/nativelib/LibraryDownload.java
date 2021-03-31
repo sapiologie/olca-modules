@@ -1,4 +1,4 @@
-package org.openlca.julia;
+package org.openlca.nativelib;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,13 +21,13 @@ class LibraryDownload {
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
 	void run() throws Exception {
-		var dir = Julia.getDefaultDir();
+		var dir = NativeLib.getDefaultDir();
 		if (!dir.exists()) {
 			if (!dir.mkdirs())
 				throw new IOException("could not create " + dir);
 		}
 
-		var path = web();
+		var path = url();
 		if (path == null)
 			throw new IllegalStateException("unsupported OS");
 
@@ -66,18 +66,14 @@ class LibraryDownload {
 		}
 	}
 
-	private String web() {
+	private String url() {
 		var base = "https://github.com/msrocka/olca-rust/releases/download/" +
 				"v1.1.0/olcar_withumf_1.1.0_";
-		switch (OS.get()) {
-			case MAC:
-				return base + "macos_2020-09-30.zip";
-			case WINDOWS:
-				return base + "windows_2020-09-29.zip";
-			case LINUX:
-				return base + "linux_2020-09-29.zip";
-			default:
-				return null;
-		}
+		return switch (OS.get()) {
+			case MAC -> base + "macos_2020-09-30.zip";
+			case WINDOWS -> base + "windows_2020-09-29.zip";
+			case LINUX -> base + "linux_2020-09-29.zip";
+			default -> null;
+		};
 	}
 }

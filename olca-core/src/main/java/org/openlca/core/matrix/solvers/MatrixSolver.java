@@ -2,8 +2,8 @@ package org.openlca.core.matrix.solvers;
 
 import org.openlca.core.matrix.format.Matrix;
 import org.openlca.core.matrix.format.MatrixReader;
-import org.openlca.julia.Julia;
-import org.openlca.julia.JuliaSolver;
+import org.openlca.nativelib.NativeLib;
+import org.openlca.nativelib.NativeSolver;
 
 /**
  * Interface for linear algebra and matrix problems that we need to solve in
@@ -94,8 +94,8 @@ public interface MatrixSolver {
 		}
 
 		public static MatrixSolver getNew() {
-			return Julia.isLoaded()
-				? new JuliaSolver()
+			return NativeLib.isLoaded()
+				? new NativeSolver()
 				: new JavaSolver();
 		}
 	}

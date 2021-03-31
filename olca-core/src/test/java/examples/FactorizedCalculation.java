@@ -4,17 +4,16 @@ import java.io.File;
 
 import org.openlca.core.library.Library;
 import org.openlca.core.library.LibraryMatrix;
-import org.openlca.julia.Julia;
-import org.openlca.julia.JuliaSolver;
+import org.openlca.nativelib.NativeLib;
+import org.openlca.nativelib.NativeSolver;
 
 public class FactorizedCalculation {
 
 	public static void main(String[] args) {
 
 		// initialize the solver
-		var libDir = "C:/Users/ms/Projects/openLCA/repos/olca-rust/bin";
-		Julia.loadFromDir(new File(libDir));
-		var solver = new JuliaSolver();
+		NativeLib.load();
+		var solver = new NativeSolver();
 
 		var libPath = "C:/Users/ms/openLCA-data-1.4/libraries/" +
 				"ecoinvent_apos_37_up_20200908_1__00.00.001";

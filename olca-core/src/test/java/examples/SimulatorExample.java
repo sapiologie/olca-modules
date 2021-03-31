@@ -2,18 +2,18 @@ package examples;
 
 import java.io.File;
 
+import org.openlca.core.database.Derby;
 import org.openlca.core.database.IDatabase;
 import org.openlca.core.database.ImpactMethodDao;
 import org.openlca.core.database.ProductSystemDao;
-import org.openlca.core.database.Derby;
 import org.openlca.core.math.CalculationSetup;
 import org.openlca.core.math.Simulator;
 import org.openlca.core.model.ProductSystem;
 import org.openlca.core.model.descriptors.ImpactDescriptor;
 import org.openlca.core.model.descriptors.ImpactMethodDescriptor;
 import org.openlca.core.results.SimpleResult;
-import org.openlca.julia.Julia;
-import org.openlca.julia.JuliaSolver;
+import org.openlca.nativelib.NativeLib;
+import org.openlca.nativelib.NativeSolver;
 
 public class SimulatorExample {
 
@@ -41,9 +41,8 @@ public class SimulatorExample {
 		}
 		System.out.println("Tacking results of " + gwp.name);
 
-		String juliaLibPath = "C:/Users/ms/Projects/openLCA/eclipse";
-		Julia.loadFromDir(new File(juliaLibPath));
-		JuliaSolver solver = new JuliaSolver();
+		NativeLib.load();
+		NativeSolver solver = new NativeSolver();
 
 		Simulator simulator = Simulator.create(setup, db, solver);
 

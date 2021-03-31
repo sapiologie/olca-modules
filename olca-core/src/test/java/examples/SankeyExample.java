@@ -5,11 +5,11 @@ import org.openlca.core.matrix.IndexFlow;
 import org.openlca.core.model.ProductSystem;
 import org.openlca.core.results.FullResult;
 import org.openlca.core.results.Sankey;
-import org.openlca.julia.Julia;
+import org.openlca.nativelib.NativeLib;
 
 public class SankeyExample {
 	public static void main(String[] args) {
-		Julia.load();
+		NativeLib.load();
 		var db = Derby.fromDataDir("ei37-apos");
 
 		var system = db.get(
@@ -20,7 +20,7 @@ public class SankeyExample {
 		var result = FullResult.of(db, system);
 		var end = System.currentTimeMillis();
 		System.out.println("Computed result in: "
-				+ ((double) (end - start) / 1000d));
+				+ ((end - start) / 1000d));
 
 		IndexFlow flow = result.flowIndex().at(42);
 
@@ -31,7 +31,7 @@ public class SankeyExample {
 				.build();
 		end = System.currentTimeMillis();
 		System.out.println("Computed sankey in: "
-				+ ((double) (end - start) / 1000d));
+				+ ((end - start) / 1000d));
 
 		System.out.println(sankey.toDot());
 

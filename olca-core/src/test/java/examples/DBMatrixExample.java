@@ -7,7 +7,7 @@ import org.openlca.core.matrix.TechIndex;
 import org.openlca.core.model.Process;
 import org.openlca.core.model.ProductSystem;
 import org.openlca.core.results.FullResult;
-import org.openlca.julia.Julia;
+import org.openlca.nativelib.NativeLib;
 
 /**
  * Shows how you build the matrices of the complete database for the direct
@@ -16,7 +16,7 @@ import org.openlca.julia.Julia;
 public class DBMatrixExample {
 
 	public static void main(String[] args) {
-		Julia.load();
+		NativeLib.load();
 		try (var db = Derby.fromDataDir("ei2")) {
 
 			var process = db.get(

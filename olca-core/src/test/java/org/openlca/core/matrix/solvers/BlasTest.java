@@ -4,12 +4,13 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openlca.julia.Julia;
+import org.openlca.nativelib.NativeLib;
 
 public class BlasTest {
 
 	@BeforeClass
 	public static void setup() {
-		Julia.load();
+		NativeLib.load();
 	}
 
 	@Test

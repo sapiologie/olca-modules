@@ -1,4 +1,6 @@
-package org.openlca.julia;
+package org.openlca.nativelib;
+
+import org.openlca.julia.Julia;
 
 public class UmfFactorizedMatrix {
     final long pointer;

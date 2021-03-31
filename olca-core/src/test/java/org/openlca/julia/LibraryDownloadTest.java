@@ -3,6 +3,7 @@ package org.openlca.julia;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openlca.nativelib.NativeLib;
 
 public class LibraryDownloadTest {
 
@@ -17,13 +18,13 @@ public class LibraryDownloadTest {
 	public void testFetchSparseLibs() {
 
 		// first load the libraries from the jar
-		Assert.assertTrue(Julia.load());
-		Assert.assertTrue(Julia.isLoaded());
-		Assert.assertFalse(Julia.hasSparseLibraries());
+		Assert.assertTrue(NativeLib.load());
+		Assert.assertTrue(NativeLib.isLoaded());
+		Assert.assertFalse(NativeLib.hasSparseLibraries());
 
 		// now fetch the sparse libraries from the web
-		Assert.assertTrue(Julia.fetchSparseLibraries());
-		Assert.assertTrue(Julia.isLoaded());
-		Assert.assertTrue(Julia.hasSparseLibraries());
+		Assert.assertTrue(NativeLib.fetchSparseLibraries());
+		Assert.assertTrue(NativeLib.isLoaded());
+		Assert.assertTrue(NativeLib.hasSparseLibraries());
 	}
 }

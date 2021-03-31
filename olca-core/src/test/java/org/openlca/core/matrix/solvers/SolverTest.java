@@ -17,8 +17,8 @@ import org.openlca.core.matrix.format.Matrix;
 import org.openlca.core.model.descriptors.FlowDescriptor;
 import org.openlca.core.model.descriptors.ProcessDescriptor;
 import org.openlca.core.results.SimpleResult;
-import org.openlca.julia.Julia;
-import org.openlca.julia.JuliaSolver;
+import org.openlca.nativelib.NativeLib;
+import org.openlca.nativelib.NativeSolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,13 +28,13 @@ public class SolverTest {
 
 	@BeforeClass
 	public static void setup() {
-		Julia.load();
+		NativeLib.load();
 	}
 
 	private final Logger log = LoggerFactory.getLogger(SolverTest.class);
 
 	@DataPoint
-	public static MatrixSolver denseSolver = new JuliaSolver();
+	public static MatrixSolver denseSolver = new NativeSolver();
 
 	@DataPoint
 	public static MatrixSolver javaSolver = new JavaSolver();

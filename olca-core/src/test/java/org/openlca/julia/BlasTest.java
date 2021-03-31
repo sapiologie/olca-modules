@@ -9,19 +9,21 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openlca.core.matrix.format.DenseMatrix;
 import org.openlca.core.matrix.format.HashPointMatrix;
+import org.openlca.nativelib.NativeLib;
+import org.openlca.nativelib.NativeSolver;
 
 public class BlasTest {
 
 	@BeforeClass
 	public static void setUp() {
-		Julia.load();
+		NativeLib.load();
 	}
 
 	@Before
 	public void assumeLibsLoaded() {
 		// run the tests in this class only if the Julia libraries could be
 		// loaded
-		assumeTrue(Julia.isLoaded());
+		assumeTrue(NativeLib.isLoaded());
 	}
 
 	@Test
@@ -45,7 +47,7 @@ public class BlasTest {
 				{ 8, 11 },
 				{ 9, 12 }
 		});
-		JuliaSolver solver = new JuliaSolver();
+		NativeSolver solver = new NativeSolver();
 		DenseMatrix m = solver.multiply(a, b);
 		assertEquals(m.get(0, 0), 50, 1e-10);
 	}

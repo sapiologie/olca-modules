@@ -9,8 +9,8 @@ import org.openlca.core.matrix.ProcessProduct;
 import org.openlca.core.matrix.TechIndex;
 import org.openlca.core.matrix.format.MatrixReader;
 import org.openlca.core.results.providers.SimpleResultProvider;
-import org.openlca.julia.Julia;
-import org.openlca.julia.JuliaSolver;
+import org.openlca.nativelib.NativeLib;
+import org.openlca.nativelib.NativeSolver;
 import org.openlca.util.Pair;
 
 /**
@@ -43,8 +43,8 @@ public class EachOneResult {
 	}
 
 	public Iterable<Pair<ProcessProduct, SimpleResult>> get() {
-		if (!Julia.isLoaded()) {
-			Julia.load();
+		if (!NativeLib.isLoaded()) {
+			NativeLib.load();
 		}
 		if (data == null) {
 			var techIndex = TechIndex.of(db);
@@ -52,7 +52,7 @@ public class EachOneResult {
 				.withImpacts(ImpactIndex.of(db))
 				.build();
 		}
-		var solver = new JuliaSolver();
+		var solver = new NativeSolver();
 		inverse = solver.invert(data.techMatrix);
 		diagA = data.techMatrix.diag();
 		lci = solver.multiply(data.flowMatrix, inverse);

@@ -3,8 +3,8 @@ package org.openlca.core.results.providers;
 import org.openlca.core.database.IDatabase;
 import org.openlca.core.matrix.MatrixData;
 import org.openlca.core.matrix.solvers.JavaSolver;
-import org.openlca.julia.Julia;
-import org.openlca.julia.JuliaSolver;
+import org.openlca.nativelib.NativeLib;
+import org.openlca.nativelib.NativeSolver;
 
 public final class ResultProviders {
 
@@ -12,8 +12,8 @@ public final class ResultProviders {
 	}
 
 	public static ResultProvider eagerOf(IDatabase db, MatrixData data) {
-		var solver = Julia.isLoaded()
-			? new JuliaSolver()
+		var solver = NativeLib.isLoaded()
+			? new NativeSolver()
 			: new JavaSolver();
 		if (data.hasLibraryLinks())
 			return LazyLibraryProvider.of(db, data);
@@ -28,8 +28,8 @@ public final class ResultProviders {
 	}
 
 	public static ResultProvider lazyOf(IDatabase db, MatrixData data) {
-		var solver = Julia.isLoaded()
-			? new JuliaSolver()
+		var solver = NativeLib.isLoaded()
+			? new NativeSolver()
 			: new JavaSolver();
 		if (data.hasLibraryLinks())
 			return LazyLibraryProvider.of(db, data);

@@ -2,9 +2,9 @@ package org.openlca.proto.server;
 
 import java.util.concurrent.TimeUnit;
 
-import org.openlca.core.database.IDatabase;
 import org.openlca.core.database.Derby;
-import org.openlca.julia.Julia;
+import org.openlca.core.database.IDatabase;
+import org.openlca.nativelib.NativeLib;
 import org.slf4j.LoggerFactory;
 
 import io.grpc.ServerBuilder;
@@ -105,7 +105,7 @@ public class Server {
     try {
 
       // try to load the native libraries
-      Julia.load();
+    	NativeLib.load();
 
       // open the database and start the server
       var db = Derby.fromDataDir(dbArg);

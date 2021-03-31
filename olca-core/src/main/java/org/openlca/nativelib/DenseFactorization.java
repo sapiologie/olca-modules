@@ -1,4 +1,4 @@
-package org.openlca.julia;
+package org.openlca.nativelib;
 
 import java.util.Arrays;
 
@@ -7,6 +7,7 @@ import org.openlca.core.matrix.format.Matrix;
 import org.openlca.core.matrix.format.MatrixConverter;
 import org.openlca.core.matrix.format.MatrixReader;
 import org.openlca.core.matrix.solvers.Factorization;
+import org.openlca.julia.Julia;
 
 public class DenseFactorization implements Factorization {
 
