@@ -119,5 +119,4 @@ public enum LibType {
 		}
 		return true;
 	}
-
 }
