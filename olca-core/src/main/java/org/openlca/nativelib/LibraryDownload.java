@@ -18,13 +18,16 @@ import org.slf4j.LoggerFactory;
  */
 class LibraryDownload {
 
+	private final File targetDir;
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
-	void run() throws Exception {
-		var dir = NativeLib.getDefaultDir();
-		if (!dir.exists()) {
-			if (!dir.mkdirs())
-				throw new IOException("could not create " + dir);
+	LibraryDownload(File targetDir) {
+		this.targetDir = targetDir;
+	}
+
+	void run() throws IOException {
+		if (!targetDir.exists()) {
+			Files.createDirectories(targetDir.toPath());
 		}
 
 		var path = url();
@@ -32,20 +35,21 @@ class LibraryDownload {
 			throw new IllegalStateException("unsupported OS");
 
 		try {
-			URL url = new URL(path);
-			try (InputStream in = url.openStream()) {
+			var url = new URL(path);
+			try (var in = url.openStream()) {
 				var temp = Files.createTempFile("olcar_1.0.0_", ".zip");
 				log.info("download libraries from {} to {}", path, temp);
 				Files.copy(in, temp, StandardCopyOption.REPLACE_EXISTING);
-				extract(temp.toFile(), dir);
+				extract(temp.toFile());
+				Files.delete(temp);
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			log.error("failed to download native libraries from " + path, e);
 			throw e;
 		}
 	}
 
-	private void extract(File zipFile, File dir) throws Exception {
+	private void extract(File zipFile) throws IOException {
 		log.info("extract library package {}", zipFile);
 		try (var zip = new ZipFile(zipFile)) {
 			var entries = zip.entries();
@@ -53,7 +57,7 @@ class LibraryDownload {
 				var e = entries.nextElement();
 				if (e.isDirectory())
 					continue;
-				var target = new File(dir, e.getName());
+				var target = new File(targetDir, e.getName());
 				if (target.exists()) {
 					log.info("file {} already exists", target);
 					continue;

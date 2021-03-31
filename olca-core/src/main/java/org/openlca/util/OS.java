@@ -1,6 +1,5 @@
 package org.openlca.util;
 
-import java.io.File;
 import java.util.Locale;
 
 /**
@@ -40,11 +39,6 @@ public enum OS {
 			detected = OTHER;
 		}
 		return detected;
-	}
-
-	public static File getTempDir() {
-		String tempDir = System.getProperty("java.io.tmpdir");
-		return new File(tempDir);
 	}
 
 	@Override

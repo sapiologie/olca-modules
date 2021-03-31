@@ -42,16 +42,26 @@ public class NativeLib {
 		return _withSparse.get();
 	}
 
-	public static synchronized boolean fetchSparseLibraries() {
-		if (isLoaded() && hasSparseLibraries())
-			return true;
-		try {
-			new LibraryDownload().run();
-		} catch (Exception e) {
-			return false;
+	/**
+	 * Downloads the native libraries of this version and saves them in the given
+	 * folder. Does nothing, if that folder already contains all native libraries
+	 * for the current platform.
+	 */
+	public static void downloadTo(File targetDir) {
+		var skip = true;
+		for (var libType : LibType.values()) {
+			if (!libType.isPresent(targetDir)) {
+				skip = false;
+				break;
+			}
 		}
-		_loaded.set(false);
-		return load();
+		if (skip)
+			return;
+		try {
+			new LibraryDownload(targetDir).run();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -226,7 +236,7 @@ public class NativeLib {
 
 		if (os == OS.MAC) {
 			if (opt == LinkOption.ALL) {
-				return new String[] {
+				return new String[]{
 					"libgcc_s.1.dylib",
 					"libquadmath.0.dylib",
 					"libgfortran.5.dylib",
@@ -241,7 +251,7 @@ public class NativeLib {
 					"libolcar_withumf.dylib",
 				};
 			} else {
-				return new String[] {
+				return new String[]{
 					"libgcc_s.1.dylib",
 					"libquadmath.0.dylib",
 					"libgfortran.5.dylib",
