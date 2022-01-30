@@ -14,6 +14,10 @@ import org.openlca.core.model.ModelType;
 import org.openlca.core.model.Process;
 import org.openlca.core.model.ProcessType;
 import org.openlca.core.model.ProductSystem;
+import org.openlca.core.matrix.ProcessProduct;
+import org.openlca.core.matrix.cache.ProcessTable;
+import org.openlca.core.model.descriptors.ProcessDescriptor;
+import java.util.List;
 import org.openlca.core.model.RootEntity;
 import org.openlca.core.model.descriptors.BaseDescriptor;
 import org.openlca.ipc.Responses;
@@ -136,6 +140,30 @@ public class ModelHandler {
 		}
 	}
 
+	@Rpc("get/providers")
+	public RpcResponse getProviders(RpcRequest req) {
+		BaseDescriptor d = readDescriptor(req);
+		if (d == null || d.refId == null)
+			return Responses.invalidParams(
+					"A valid flow reference with a valid @id is required", req);
+
+		RootEntity e = Daos.root(db, d.type)
+			.getForRefId(d.refId);
+		if (e == null)
+			return Responses.error(404, "Not found", req);
+
+		List<ProcessProduct> providers = ProcessTable.create(db)
+				.getProviders(e.id);
+		JsonArray array = new JsonArray();
+		EntityCache cache = EntityCache.create(db);
+		providers.stream()
+				.map(p -> p.process)
+				.filter(p -> p instanceof ProcessDescriptor)
+				.map(p -> Json.asDescriptor(p, cache))
+				.forEach(array::add);
+		return Responses.ok(array, req);
+	}
+
 	@Rpc("create/product_system")
 	public RpcResponse createProductSystem(RpcRequest req) {
 		if (req.params == null || !req.params.isJsonObject())
@@ -162,9 +190,9 @@ public class ModelHandler {
 		config.providerLinking = DefaultProviders.PREFER;
 		if (obj.has("providerLinking")) {
 			if (obj.get("providerLinking").getAsString().toLowerCase().equals("ignore")) {
-				config.providerLinking = DefaultProviders.IGNORE;				
+				config.providerLinking = DefaultProviders.IGNORE;
 			} else if (obj.get("providerLinking").getAsString().toLowerCase().equals("only")) {
-				config.providerLinking = DefaultProviders.ONLY;								
+				config.providerLinking = DefaultProviders.ONLY;
 			}
 		}
 		ProductSystemBuilder builder = new ProductSystemBuilder(MatrixCache.createLazy(db), config);

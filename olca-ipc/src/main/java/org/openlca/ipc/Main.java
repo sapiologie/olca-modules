@@ -5,8 +5,11 @@ import java.io.IOException;
 
 import org.openlca.core.database.IDatabase;
 import org.openlca.core.database.derby.DerbyDatabase;
+import org.openlca.core.database.upgrades.Upgrades;
 import org.openlca.core.matrix.solvers.IMatrixSolver;
 import org.openlca.core.matrix.solvers.JavaSolver;
+import org.openlca.julia.Julia;
+import org.openlca.julia.JuliaSolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +49,14 @@ public class Main {
 		IDatabase db = initDB();
 		if (db == null)
 			return;
+		try {
+			log.info("DB migration: starting");
+			Upgrades.on(db);
+			log.info("DB migration: done");
+		} catch (Exception e) {
+			log.error("Failed running the DB migration", e);
+			return;
+		}
 		int port = initPort();
 		try {
 			IMatrixSolver solver = initSolver();
@@ -56,6 +67,7 @@ public class Main {
 					new Thread(() -> shutdown(server, db)));
 		} catch (Exception e) {
 			log.error("Failed to start server", e);
+			return;
 		}
 	}
 
@@ -91,19 +103,12 @@ public class Main {
 
 	private IMatrixSolver initSolver() {
 		try {
-//			if (Julia.loadFromDir(new File("."))
-//					&& Julia.isLoaded(JuliaModule.OPEN_BLAS)) {
-//				log.info("Loaded Julia libraries and solver");
-//				return new JuliaDenseSolver();
-//			}
-//			NativeLibrary.loadFromDir(new File("."));
-//			if (NativeLibrary.isLoaded()) {
-//				log.info("Loaded olca-eigen library and solver");
-//				return new DenseSolver();
-//			}
-//			log.warn("Could not load a native library; use plain Java solver" +
-//					"; this can be very slow");
-			return new JavaSolver();
+			if (Julia.load() && Julia.isWithUmfpack()) {
+				log.info("Loaded Julia libraries with UMFPACK and solver");
+				return new JuliaSolver();
+			}
+			log.warn("Could not load a native library; use plain Java solver" +
+					"; this can be very slow");			return new JavaSolver();
 		} catch (Exception e) {
 			log.error("Initialization of matrix solver failed", e);
 			log.warn("Could not load a native library; use plain Java solver" +
