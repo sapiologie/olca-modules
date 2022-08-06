@@ -10,6 +10,9 @@ import org.openlca.core.matrix.solvers.JavaSolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.openlca.julia.Julia;
+import org.openlca.julia.JuliaSolver;
+
 public class Main {
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
@@ -91,18 +94,11 @@ public class Main {
 
 	private IMatrixSolver initSolver() {
 		try {
-//			if (Julia.loadFromDir(new File("."))
-//					&& Julia.isLoaded(JuliaModule.OPEN_BLAS)) {
-//				log.info("Loaded Julia libraries and solver");
-//				return new JuliaDenseSolver();
-//			}
-//			NativeLibrary.loadFromDir(new File("."));
-//			if (NativeLibrary.isLoaded()) {
-//				log.info("Loaded olca-eigen library and solver");
-//				return new DenseSolver();
-//			}
-//			log.warn("Could not load a native library; use plain Java solver" +
-//					"; this can be very slow");
+			if (Julia.load() && Julia.isWithUmfpack()) {
+				log.info("Loaded Julia libraries with UMFPACK and solver");
+				return new JuliaSolver();
+			}
+			log.warn("Could not load a native library; use plain Java solver; this can be very slow");
 			return new JavaSolver();
 		} catch (Exception e) {
 			log.error("Initialization of matrix solver failed", e);
