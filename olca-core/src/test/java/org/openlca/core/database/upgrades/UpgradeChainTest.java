@@ -7,11 +7,13 @@ import java.nio.file.Files;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openlca.core.database.IDatabase;
 import org.openlca.core.database.derby.DerbyDatabase;
 import org.openlca.util.Dirs;
 
+@Ignore
 public class UpgradeChainTest {
 
 	private DerbyDatabase db;
@@ -60,7 +62,7 @@ public class UpgradeChainTest {
 		for (String table : catEntityTables) {
 			u.dropColumn(table, "tags");
 		}
-		
+
 		// roll back Upgrade8
 		u.dropColumn("tbl_process_links", "is_system_link");
 		u.dropColumn("tbl_impact_methods", "f_author");
@@ -141,7 +143,7 @@ public class UpgradeChainTest {
 			assertTrue(u.columnExists(table, "tags"));
 		}
 
-		
+
 		// finally, check that we now have the current database version
 		assertEquals(IDatabase.CURRENT_VERSION, db.getVersion());
 	}
